@@ -26,7 +26,7 @@ class SchedulePane(spreadsheet: Spreadsheet) extends ScrollPane {
       if (hasFocus) new TextField(spreadsheet.getValueAt(row, column).asInstanceOf[String])
       else
         new Label(userData(row, column)) {
-          xAlignment = Alignment.Right
+          xAlignment = Alignment.Left
         }
 
     def userData(row: Int, column: Int): String = {
@@ -54,19 +54,14 @@ case class Spreadsheet(schedule: Schedule) extends TableModel {
 
   val cells: Array[Array[Cell]] = schedule.entries.map(entry => Row(entry).cells).toArray
 
-  def removeTableModelListener(listener: TableModelListener): Unit = {
+  def removeTableModelListener(listener: TableModelListener): Unit =
     listeners -= listener
-  }
 
-  def addTableModelListener(listener: TableModelListener): Unit = {
+  def addTableModelListener(listener: TableModelListener): Unit =
     listeners += listener
-  }
 
   def setValueAt(value: scala.Any, x: Int, y: Int): Unit =
-    value match {
-      case v: String => cells(x)(y) = TextCell(v)
-      case v: Date => cells(x)(y) = DateCell(v)
-    }
+      cells(x)(y).text = value.asInstanceOf[String]
 
   def getRowCount: Int = schedule.entryCount
 
@@ -74,38 +69,30 @@ case class Spreadsheet(schedule: Schedule) extends TableModel {
 
   def getColumnName(y: Int): String = Row.columnNames(y)
 
-  def getColumnClass(y: Int): Class[_] = Row.columnTypes(y)
+  def getColumnClass(y: Int): Class[_] = classOf[String]
 
   def isCellEditable(x: Int, y: Int): Boolean = true
 
-  def getValueAt(x: Int, y: Int): AnyRef = {
-    cells(x)(y) match {
-      case v: TextCell => v.text
-      case v: DateCell => new SimpleDateFormat("mm/dd/yyyy").format(v.date)
-    }
-  }
+  def getValueAt(x: Int, y: Int): AnyRef = cells(x)(y).text
 }
 
 case class Row(entry: ScheduleEntry) {
   val cells: Array[Cell] =
     Array(
-      TextCell(entry.country),
-      TextCell(entry.city),
-      DateCell(entry.date),
-      TextCell(entry.instructor),
-      TextCell(entry.entryName),
-      TextCell(entry.pricing),
-      TextCell(entry.bookingPrompt),
-      TextCell(entry.bookingUrl)
+      Cell(entry.country),
+      Cell(entry.city),
+      Cell(entry.date),
+      Cell(entry.instructor),
+      Cell(entry.entryName),
+      Cell(entry.pricing),
+      Cell(entry.bookingPrompt),
+      Cell(entry.bookingUrl)
     )
 }
 
 object Row {
   val columnNames: Array[String] = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing", "Booking Prompt", "Booking link")
-  val columnTypes: Array[Class[_]] = Array(TextCell.getClass, TextCell.getClass, DateCell.getClass, TextCell.getClass, TextCell.getClass, TextCell.getClass, TextCell.getClass, TextCell.getClass)
   val width: Int = columnNames.length
 }
 
-sealed trait Cell
-case class TextCell(text: String) extends Cell
-case class DateCell(date: Date) extends Cell
+case class Cell(var text: String)
