@@ -1,7 +1,7 @@
 package com.domainlanguage.schedule
 
 import scala.swing._
-import java.util.Date
+import java.text.SimpleDateFormat
 
 /**
  * User: Vladimir Gitlevich
@@ -12,9 +12,10 @@ object Scheduler extends SimpleSwingApplication {
   def top = new MainFrame {
     title = "Domain Language Class Scheduler"
 
-    val schedule = Schedule().withNewEntry(
-      ScheduleEntry("North America", "San Francisco", new Date(), "Eric Evans", "DDD Overview", "See QCon SF site.", "Book Online", "/some/where" ))
+    val schedule = Schedule()
+      .withNewEntry(ScheduleEntry("North America", "San Francisco", new SimpleDateFormat("mm/dd/yyyy").parse("11/15/2013"), "Eric Evans", "DDD Overview", "See QCon SF site.", "Book Online", "/some/where" ))
+      .withNewEntry(ScheduleEntry("North America", "New York", new SimpleDateFormat("mm/dd/yyyy").parse("01/21/2014"), "Eric Evans", "DDD Immersion", "$3,090 $2,790\nif booked by 8/5", "Book Online", "/some/where" ))
 
-    contents = new Spreadsheet(schedule)
+    contents = new SchedulePane(Spreadsheet(schedule))
   }
 }

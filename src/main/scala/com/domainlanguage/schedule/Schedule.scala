@@ -14,6 +14,10 @@ case class Schedule(entries: List[ScheduleEntry] = List()) {
   def withNewEntry(entry: ScheduleEntry): Schedule = {
     Schedule(entries :+ entry)
   }
+
+  def indexOf(entry: ScheduleEntry): Int = {
+    entries.indexOf(entry)
+  }
 }
 
 case class ScheduleEntry(country: String, city: String, date: Date, instructor: String, entryName: String, pricing: String, bookingPrompt: String, bookingUrl: String)
