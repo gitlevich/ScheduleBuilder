@@ -10,9 +10,9 @@ import java.util.Date
  */
 
 class Spreadsheet(schedule: Schedule) extends ScrollPane {
-  val rowData: Array[Array[Any]] = Array(Array[Any]())
+  val rowData = Array(Row(0, schedule.entries(0)).cells().asInstanceOf[Array[Any]])
 
-  val table = new Table(rowData, Row.cellHeaders) {
+  val table = new Table(rowData, Row.columnNames) {
     rowHeight = 25
     autoResizeMode = Table.AutoResizeMode.Off
     showGrid = true
@@ -31,7 +31,7 @@ class Spreadsheet(schedule: Schedule) extends ScrollPane {
 
 
 case class Row(y: Int, entry: ScheduleEntry) {
-  def cells(): Array[Cell] = {
+  def cells(): Array[Cell] =
     Array(
       TextCell(entry.country, 0, y),
       TextCell(entry.city, 1, y),
@@ -42,11 +42,10 @@ case class Row(y: Int, entry: ScheduleEntry) {
       TextCell(entry.bookingPrompt, 6, y),
       TextCell(entry.bookingUrl, 7, y)
     )
-  }
 }
 
 object Row {
-  val cellHeaders = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing", "Booking Prompt", "Booking link")
+  val columnNames = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing", "Booking Prompt", "Booking link")
 }
 
 sealed trait Cell
