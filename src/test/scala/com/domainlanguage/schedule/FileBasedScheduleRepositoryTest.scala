@@ -19,7 +19,7 @@ class FileBasedScheduleRepositoryTest extends ShouldMatchersForJUnit {
   }
 
   @Test def shouldConvertJsonToSchedule(): Unit = {
-    val schedule = repository.findByName("schedule.json")
+    val schedule = repository.findBy(ClassPathScheduleSpec("schedule.json"))
 
     schedule should not be null
     schedule.entryCount should equal (5)

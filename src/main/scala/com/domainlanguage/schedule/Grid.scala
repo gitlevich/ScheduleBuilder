@@ -10,7 +10,7 @@ import javax.swing.event.TableModelListener
  * Time: 15:19
  */
 case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Array[String]) extends TableModel {
-  def cells: Array[Array[GridCell]] = {
+  def rows: Array[Array[GridCell]] = {
     val cellArray = Array.ofDim[GridCell](getRowCount, getColumnCount)
 
     for(row <- 0 until getRowCount; column <- 0 until getColumnCount) {

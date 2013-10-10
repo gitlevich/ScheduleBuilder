@@ -11,7 +11,7 @@ import java.awt.Dimension
 
 class SchedulePane(grid: Grid) extends ScrollPane {
 
-  val table = new Table(grid.cells.asInstanceOf[Array[Array[Any]]], grid.columnHeaders) {
+  val table = new Table(grid.rows.asInstanceOf[Array[Array[Any]]], grid.columnHeaders) {
     model = grid
     rowHeight = 25
     autoResizeMode = Table.AutoResizeMode.Off

@@ -2,7 +2,7 @@ package com.domainlanguage.schedule
 
 import scala.swing._
 import scala.collection.mutable._
-import scala.swing.event.ButtonClicked
+import java.io.File
 
 /**
  * User: Vladimir Gitlevich
@@ -10,29 +10,66 @@ import scala.swing.event.ButtonClicked
  * Time: 23:27
  */
 object Scheduler extends SimpleSwingApplication {
+  import Conversions._
+
   val repository = new FileBasedScheduleRepository()
 
-  def top = new MainFrame {
-    title = "Domain Language Class Scheduler"
+  def top = {
+    var file: File = null
+    var schedule: Schedule = Schedule()
+    var schedulePane: SchedulePane = null
 
-    val schedule = repository.findByName("schedule.json")
-    val schedulePane = new SchedulePane(schedule2Grid(schedule))
-    val saveButton = new Button("Save")
+    new MainFrame {
+      title = "Domain Language Class Scheduler"
 
-    val flowPanel = new FlowPanel(schedulePane, saveButton)
+      schedulePane = new SchedulePane(schedule2Grid(schedule))
+      val fileChooser = new FileChooser()
 
-    contents = flowPanel
-
-    listenTo(saveButton)
-    reactions += {
-      case ButtonClicked(b) =>
+      val saveMenuItem = new MenuItem(Action("Save") {
         println(schedulePane.table.model)
-        repository.saveWithName("schedule.json", grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
+        repository.save(file, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
+      })
+      saveMenuItem.enabled = false
+
+      val openMenuItem = new MenuItem(Action("Open") {
+        if (fileChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
+          file = fileChooser.selectedFile
+          schedule = repository.findBy(FileScheduleSpec(file))
+          schedulePane = new SchedulePane(schedule2Grid(schedule))
+          saveMenuItem.enabled = true
+          contents = schedulePane
+        }
+      })
+
+      menuBar = new MenuBar {
+        contents += new Menu("File") {
+          contents += openMenuItem
+          contents += saveMenuItem
+          contents += new Separator
+          contents += new MenuItem(Action("Quit") {
+            println("quitting")
+            if(file != null) {
+              repository.save(file, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
+            }
+            System.exit(0)
+          })
+        }
+      }
+
+      contents = schedulePane
     }
   }
 
+}
+
+
+object Conversions {
   def grid2Schedule(grid: Grid): Schedule = {
-    null
+
+    val entries = for(r <- grid.rows)
+      yield ScheduleEntry(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value)
+
+    Schedule(entries.toList)
   }
 
   def schedule2Grid(schedule: Schedule): Grid = {
@@ -55,4 +92,5 @@ object Scheduler extends SimpleSwingApplication {
 
     Grid(cells, ScheduleEntry.columnNames)
   }
+
 }

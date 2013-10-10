@@ -1,6 +1,7 @@
 package com.domainlanguage.schedule
 
 import scala.collection.mutable.ListBuffer
+import java.io.File
 
 
 /**
@@ -29,6 +30,11 @@ object ScheduleEntry {
 }
 
 trait ScheduleRepository {
-  def findByName(name: String): Schedule
-  def saveWithName(name: String, schedule: Schedule): Unit
+  def findBy(spec: ScheduleSpec): Schedule
+  def save(name: String, schedule: Schedule): Unit
+  def save(file: File, schedule: Schedule): Unit
 }
+
+trait ScheduleSpec
+case class FileScheduleSpec(file: File) extends ScheduleSpec
+case class ClassPathScheduleSpec(fileName: String) extends ScheduleSpec

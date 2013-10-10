@@ -1,6 +1,7 @@
 package com.domainlanguage.schedule
 
 import scala.util.parsing.json.{JSONObject, JSON}
+import java.io.File
 
 /**
  * User: Vladimir Gitlevich
@@ -9,18 +10,37 @@ import scala.util.parsing.json.{JSONObject, JSON}
  */
 class FileBasedScheduleRepository extends ScheduleRepository {
 
-  def findByName(name: String): Schedule = {
-    toSchedule(readFromClasspath(name))
+  def findBy(spec: ScheduleSpec): Schedule = {
+    spec match {
+      case s: FileScheduleSpec =>
+        toSchedule(readFromFile(s.file))
+      case s: ClassPathScheduleSpec =>
+        toSchedule(readFromClasspath(s.fileName))
+    }
   }
 
-  def saveWithName(name: String, schedule: Schedule): Unit = {
+  def save(name: String, schedule: Schedule): Unit = {
     println(s"Saving schedule with name $name")
+  }
+
+  def save(file: File, schedule: Schedule): Unit = {
+    println(s"Saving schedule with name ${file.getAbsoluteFile}")
   }
 
   def readFromClasspath(fileName: String): String = {
     require(fileName != null)
 
     val source = scala.io.Source.fromInputStream(classOf[FileBasedScheduleRepository].getClassLoader.getResourceAsStream(fileName))
+    val lines = source.mkString
+    source.close()
+
+    lines
+  }
+
+  def readFromFile(file: File): String = {
+    require(file != null)
+
+    val source = scala.io.Source.fromFile(file)
     val lines = source.mkString
     source.close()
 
