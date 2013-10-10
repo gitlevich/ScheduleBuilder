@@ -2,7 +2,7 @@ package com.domainlanguage.schedule
 
 import scala.collection.mutable.ListBuffer
 import javax.swing.table.TableModel
-import javax.swing.event.TableModelListener
+import javax.swing.event.{TableModelEvent, TableModelListener}
 
 /**
  * User: Vladimir Gitlevich
@@ -18,6 +18,22 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
     }
 
     cellArray
+  }
+
+  def addEmptyRow(): Unit = {
+    gridCells += Grid.emptyRow
+    println(gridCells)
+    notifyListeners()
+  }
+
+  def removeRow(row: Int): Unit = {
+    gridCells.remove(row)
+    println(gridCells)
+    notifyListeners()
+  }
+
+  def notifyListeners() {
+    listeners.foreach(l => l.tableChanged(new TableModelEvent(this)))
   }
 
   def setValueAt(value: Any, row: Int, column: Int): Unit =
@@ -41,4 +57,8 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
   private val listeners: ListBuffer[TableModelListener] = ListBuffer.empty
 }
 
-case class GridCell(value: String)
+object Grid {
+  def emptyRow = ListBuffer(GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell())
+}
+
+case class GridCell(value: String = "")
