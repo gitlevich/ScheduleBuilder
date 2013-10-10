@@ -20,3 +20,10 @@ case class Schedule(entries: List[ScheduleEntry] = List()) {
 }
 
 case class ScheduleEntry(country: String, city: String, date: String, instructor: String, entryName: String, pricing: String, bookingPrompt: String, bookingUrl: String)
+object ScheduleEntry {
+  val columnNames: Array[String] = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing", "Booking Prompt", "Booking link")
+}
+
+trait ScheduleRepository {
+  def findByName(name: String): Schedule
+}
