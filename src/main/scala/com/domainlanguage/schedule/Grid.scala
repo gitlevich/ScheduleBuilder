@@ -9,7 +9,7 @@ import javax.swing.event.TableModelListener
  * Date: 10/9/13
  * Time: 15:19
  */
-case class Grid(columnHeaders: Array[String]) extends TableModel {
+case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Array[String]) extends TableModel {
   def cells: Array[Array[GridCell]] = {
     val arr = Array.ofDim[GridCell](getRowCount, getColumnCount)
 
@@ -20,7 +20,7 @@ case class Grid(columnHeaders: Array[String]) extends TableModel {
     arr
   }
 
-  def setValueAt(value: scala.Any, row: Int, column: Int): Unit =
+  def setValueAt(value: Any, row: Int, column: Int): Unit =
     gridCells(row)(column) = GridCell(value.asInstanceOf[String])
   def getValueAt(row: Int, column: Int): AnyRef = gridCells(row)(column).value
 
@@ -38,7 +38,6 @@ case class Grid(columnHeaders: Array[String]) extends TableModel {
   def addTableModelListener(listener: TableModelListener): Unit =
     listeners += listener
 
-  private val gridCells = ListBuffer[ListBuffer[GridCell]]()
   private val listeners: ListBuffer[TableModelListener] = ListBuffer.empty
 }
 

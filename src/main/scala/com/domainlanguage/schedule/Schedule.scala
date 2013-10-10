@@ -1,5 +1,7 @@
 package com.domainlanguage.schedule
 
+import scala.collection.mutable.ListBuffer
+
 
 /**
  * User: Vladimir Gitlevich
@@ -19,7 +21,9 @@ case class Schedule(entries: List[ScheduleEntry] = List()) {
   }
 }
 
-case class ScheduleEntry(country: String, city: String, date: String, instructor: String, entryName: String, pricing: String, bookingPrompt: String, bookingUrl: String)
+case class ScheduleEntry(country: String, city: String, date: String, instructor: String, entryName: String, pricing: String, bookingPrompt: String, bookingUrl: String) {
+  val asMutableList = ListBuffer(country, city, date, instructor, entryName, pricing, bookingPrompt, bookingUrl)
+}
 object ScheduleEntry {
   val columnNames: Array[String] = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing", "Booking Prompt", "Booking link")
 }
