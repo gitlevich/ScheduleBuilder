@@ -2,6 +2,7 @@ package com.domainlanguage.schedule
 
 import scala.swing._
 import scala.collection.mutable._
+import scala.swing.event.ButtonClicked
 
 /**
  * User: Vladimir Gitlevich
@@ -15,7 +16,26 @@ object Scheduler extends SimpleSwingApplication {
     title = "Domain Language Class Scheduler"
 
     val schedule = repository.findByName("schedule.json")
+    val schedulePane = new SchedulePane(schedule2Grid(schedule))
+    val saveButton = new Button("Save")
 
+    val flowPanel = new FlowPanel(schedulePane, saveButton)
+
+    contents = flowPanel
+
+    listenTo(saveButton)
+    reactions += {
+      case ButtonClicked(b) =>
+        println(schedulePane.table.model)
+        repository.saveWithName("schedule.json", grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
+    }
+  }
+
+  def grid2Schedule(grid: Grid): Schedule = {
+    null
+  }
+
+  def schedule2Grid(schedule: Schedule): Grid = {
     val cells = ListBuffer[ListBuffer[GridCell]]()
 
     schedule.entries.foreach {
@@ -33,8 +53,6 @@ object Scheduler extends SimpleSwingApplication {
         cells += row
     }
 
-    val grid = Grid(cells, ScheduleEntry.columnNames)
-
-    contents = new SchedulePane(grid)
+    Grid(cells, ScheduleEntry.columnNames)
   }
 }

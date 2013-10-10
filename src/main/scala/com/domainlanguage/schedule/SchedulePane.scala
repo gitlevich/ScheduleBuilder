@@ -1,6 +1,7 @@
 package com.domainlanguage.schedule
 
-import scala.swing._
+import scala.swing.{ScrollPane, Table, Component, Label, Button, TextField, ListView, Alignment}
+import java.awt.Dimension
 
 /**
  * User: Vladimir Gitlevich
@@ -16,6 +17,8 @@ class SchedulePane(grid: Grid) extends ScrollPane {
     autoResizeMode = Table.AutoResizeMode.Off
     showGrid = true
     gridColor = new java.awt.Color(150, 150, 150)
+
+    minimumSize = new Dimension(500, 300)
 
     override def rendererComponent(isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component =
       if (hasFocus) new TextField(grid.getValueAt(row, column).asInstanceOf[String])

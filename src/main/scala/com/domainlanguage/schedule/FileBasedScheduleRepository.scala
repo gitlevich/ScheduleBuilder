@@ -13,6 +13,10 @@ class FileBasedScheduleRepository extends ScheduleRepository {
     toSchedule(readFromClasspath(name))
   }
 
+  def saveWithName(name: String, schedule: Schedule): Unit = {
+    println(s"Saving schedule with name $name")
+  }
+
   def readFromClasspath(fileName: String): String = {
     require(fileName != null)
 

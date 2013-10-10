@@ -11,13 +11,13 @@ import javax.swing.event.TableModelListener
  */
 case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Array[String]) extends TableModel {
   def cells: Array[Array[GridCell]] = {
-    val arr = Array.ofDim[GridCell](getRowCount, getColumnCount)
+    val cellArray = Array.ofDim[GridCell](getRowCount, getColumnCount)
 
     for(row <- 0 until getRowCount; column <- 0 until getColumnCount) {
-      arr(row)(column) = gridCells(row)(column)
+      cellArray(row)(column) = gridCells(row)(column)
     }
 
-    arr
+    cellArray
   }
 
   def setValueAt(value: Any, row: Int, column: Int): Unit =
