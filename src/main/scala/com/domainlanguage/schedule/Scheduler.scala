@@ -47,7 +47,6 @@ object Scheduler extends SimpleSwingApplication {
       }
 
       val saveMenuItem = new MenuItem(Action("Save") {
-        println(schedulePane.table.model)
         saveSchedule()
       })
       saveMenuItem.enabled = false
@@ -83,7 +82,6 @@ object Scheduler extends SimpleSwingApplication {
       contents = boxPanel
 
       def tableChanged(event: TableModelEvent): Unit = {
-        println(s"Notified of table change: $event")
         isScheduleChanged = true
         saveMenuItem.enabled = true
       }

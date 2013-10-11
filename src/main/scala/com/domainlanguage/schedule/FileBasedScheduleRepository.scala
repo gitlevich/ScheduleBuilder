@@ -1,7 +1,6 @@
 package com.domainlanguage.schedule
 
-import scala.util.parsing.json.{JSONObject, JSON}
-import java.io.File
+import java.io.{BufferedWriter, FileWriter, PrintWriter, File}
 
 /**
  * User: Vladimir Gitlevich
@@ -13,9 +12,9 @@ class FileBasedScheduleRepository extends ScheduleRepository {
   def findBy(spec: ScheduleSpec): Schedule = {
     spec match {
       case s: FileScheduleSpec =>
-        toSchedule(readFromFile(s.file))
+        Schedule.fromJsonString(readFromFile(s.file))
       case s: ClassPathScheduleSpec =>
-        toSchedule(readFromClasspath(s.fileName))
+        Schedule.fromJsonString(readFromClasspath(s.fileName))
     }
   }
 
@@ -24,7 +23,9 @@ class FileBasedScheduleRepository extends ScheduleRepository {
   }
 
   def save(file: File, schedule: Schedule): Unit = {
-    println(s"Saving schedule with name ${file.getAbsoluteFile}")
+    val writer = new PrintWriter( new BufferedWriter(new FileWriter(file,false)))
+    writer.println(schedule.toJsonString)
+    writer.close()
   }
 
   def readFromClasspath(fileName: String): String = {
@@ -45,16 +46,5 @@ class FileBasedScheduleRepository extends ScheduleRepository {
     source.close()
 
     lines
-  }
-
-  def toEntry(p: Map[String, String]): ScheduleEntry = {
-    ScheduleEntry(p("country"), p("city"), p("date"), p("instructor"), p("className"), p("pricing"), p("bookingPrompt"), p("bookingUrl"))
-  }
-
-  def toSchedule(jsonString: String): Schedule = {
-    val schedulePrototype = JSON.parseFull(jsonString).getOrElse(new JSONObject(Map.empty[String, Any])).asInstanceOf[Map[String, Any]]
-    val entryPrototypes = schedulePrototype("schedule").asInstanceOf[List[Map[String, String]]]
-
-    Schedule(entryPrototypes.map(p => toEntry(p)).toList)
   }
 }

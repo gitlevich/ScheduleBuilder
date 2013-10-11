@@ -36,8 +36,10 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
     listeners.foreach(l => l.tableChanged(new TableModelEvent(this)))
   }
 
-  def setValueAt(value: Any, row: Int, column: Int): Unit =
+  def setValueAt(value: Any, row: Int, column: Int): Unit = {
     gridCells(row)(column) = GridCell(value.asInstanceOf[String])
+    notifyListeners()
+  }
   def getValueAt(row: Int, column: Int): AnyRef = gridCells(row)(column).value
 
   def getRowCount: Int = gridCells.length
