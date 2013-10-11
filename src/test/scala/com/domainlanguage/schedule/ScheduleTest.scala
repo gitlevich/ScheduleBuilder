@@ -27,7 +27,7 @@ class ScheduleTest extends ShouldMatchersForJUnit {
       |            "instructor": "Eric Evans",
       |            "className": "DDD Overview",
       |            "pricing": "See QCon SF site.",
-      |            "bookingPrompt": "Book Online »",
+      |            "bookingPrompt": "Book Online",
       |            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C"
       |        },
       |        {
@@ -37,7 +37,7 @@ class ScheduleTest extends ShouldMatchersForJUnit {
       |            "instructor": "Eric Evans",
       |            "className": "DDD Immersion",
       |            "pricing": "$3,090 $2,790 if booked by 8/5",
-      |            "bookingPrompt": "Book Online »",
+      |            "bookingPrompt": "Book Online",
       |            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDmNYC2014-01-21P"
       |        }
       |    ]

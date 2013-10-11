@@ -22,13 +22,11 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
 
   def addEmptyRow(): Unit = {
     gridCells += Grid.emptyRow
-    println(gridCells)
     notifyListeners()
   }
 
   def removeRow(row: Int): Unit = {
     gridCells.remove(row)
-    println(gridCells)
     notifyListeners()
   }
 

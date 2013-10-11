@@ -1,13 +1,14 @@
 package com.domainlanguage.schedule
 
 import java.io.{BufferedWriter, FileWriter, PrintWriter, File}
+import grizzled.slf4j.Logging
 
 /**
  * User: Vladimir Gitlevich
  * Date: 10/9/13
  * Time: 15:58
  */
-class FileBasedScheduleRepository extends ScheduleRepository {
+class FileBasedScheduleRepository extends ScheduleRepository with Logging {
 
   def findBy(spec: ScheduleSpec): Schedule = {
     spec match {
@@ -19,7 +20,7 @@ class FileBasedScheduleRepository extends ScheduleRepository {
   }
 
   def save(name: String, schedule: Schedule): Unit = {
-    println(s"Saving schedule with name $name")
+    debug(s"Saving schedule with name $name")
   }
 
   def save(file: File, schedule: Schedule): Unit = {

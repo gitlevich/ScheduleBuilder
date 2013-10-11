@@ -25,7 +25,6 @@ object Scheduler extends SimpleSwingApplication {
       title = "Domain Language Class Scheduler"
 
       var isScheduleChanged = false
-      var shouldSaveSchedule = true
       var schedule = Schedule()
       var schedulePane = new SchedulePane(schedule2Grid(schedule, this))
 
@@ -88,13 +87,14 @@ object Scheduler extends SimpleSwingApplication {
 
       def saveSchedule() {
         if (isScheduleChanged) {
-          if (scheduleFile == null) {
-            if (fileChooser.showSaveDialog(schedulePane) == FileChooser.Result.Approve) {
+          if (scheduleFile == null && fileChooser.showSaveDialog(schedulePane) == FileChooser.Result.Approve) {
               scheduleFile = fileChooser.selectedFile
-            }
           }
-          repository.save(scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
-          isScheduleChanged = false
+
+          if (scheduleFile != null) {
+            repository.save(scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
+            isScheduleChanged = false
+          }
         }
       }
 

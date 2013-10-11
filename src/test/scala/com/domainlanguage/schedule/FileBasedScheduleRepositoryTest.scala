@@ -31,7 +31,7 @@ class FileBasedScheduleRepositoryTest extends ShouldMatchersForJUnit {
     firstEntry.instructor should be ("Eric Evans")
     firstEntry.entryName should be ("DDD Overview")
     firstEntry.pricing should be ("See QCon SF site.")
-    firstEntry.bookingPrompt should be ("Book Online »")
+    firstEntry.bookingPrompt should startWith ("Book Online ")
     firstEntry.bookingUrl should be ("http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C")
   }
 }
