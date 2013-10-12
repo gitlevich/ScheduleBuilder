@@ -68,7 +68,6 @@ object ScheduleEntry {
 
 trait ScheduleRepository {
   def findBy(spec: ScheduleSpec): Schedule
-  def save(name: String, schedule: Schedule): Unit
   def save(file: File, schedule: Schedule): Unit
 }
 
