@@ -21,22 +21,21 @@ trait ScheduleExporter extends FilePersistence {
   }
 
   def asDetailTable(schedule: Schedule): String = {
-    val replacements = schedule.entries map {
+    import Schedule._
+    val replacements = schedule.events map {
       entry =>
-        Map("country" -> ecs(entry.country),
-          "city" -> ecs(entry.city),
-          "date" -> ecs(entry.date),
-          "instructor" -> ecs(entry.instructor),
-          "entryName" -> ecs(entry.entryName),
-          "pricing" -> ecs(entry.pricing),
-          "bookingPrompt" -> ecs(entry.bookingPrompt),
-          "bookingUrl" -> ecs(entry.bookingUrl)
+        Map(country -> ecs(entry.country),
+          city -> ecs(entry.city),
+          date -> ecs(entry.date),
+          instructor -> ecs(entry.instructor),
+          eventName -> ecs(entry.eventName),
+          pricing -> ecs(entry.pricing),
+          bookingPrompt -> ecs(entry.bookingPrompt),
+          bookingUrl -> ecs(entry.bookingUrl)
         )
     }
 
-    val result = replacements.map {
-      r => r.foldLeft(detailRow)((s: String, x: (String, String)) => ("#\\{" + x._1 + "\\}").r.replaceAllIn(s, x._2))
-    }
+    val result = render(detailRow, replacements)
 
     val sb = new StringBuilder()
     sb.append(detailTop)
@@ -46,6 +45,12 @@ trait ScheduleExporter extends FilePersistence {
     sb.toString()
   }
 
-  private def ecs(string: String): String = string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", "&raquo;")
+
+  private def render(template: String, replacements: List[Map[String, String]]): List[String] =
+    replacements.map (r => r.foldLeft(template)((s: String, x: (String, String)) =>
+      ("#\\{" + x._1 + "\\}").r.replaceAllIn(s, x._2)))
+
+  private def ecs(string: String): String =
+    string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", "&raquo;")
 
 }

@@ -34,8 +34,8 @@ object Scheduler extends SimpleSwingApplication {
         override def getDescription = "json files (.json)"
       }
 
-      val addEntryButton = new Button("Add entry")
-      val removeEntryButton = new Button("Remove entry")
+      val addEntryButton = new Button("Add event")
+      val removeEntryButton = new Button("Remove event")
 
       val boxPanel = new BoxPanel(Orientation.Vertical) {
         contents += schedulePane
@@ -136,7 +136,7 @@ object Conversions {
   def grid2Schedule(grid: Grid): Schedule = {
 
     val entries = for (r <- grid.rows)
-    yield ScheduleEntry(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value)
+    yield Event(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value)
 
     Schedule(entries.toList)
   }
@@ -144,14 +144,14 @@ object Conversions {
   def schedule2Grid(schedule: Schedule, listener: TableModelListener): Grid = {
     val cells = ListBuffer[ListBuffer[GridCell]]()
 
-    schedule.entries.foreach {
+    schedule.events.foreach {
       entry =>
         val row = ListBuffer[GridCell]()
         row += GridCell(entry.country)
         row += GridCell(entry.city)
         row += GridCell(entry.date)
         row += GridCell(entry.instructor)
-        row += GridCell(entry.entryName)
+        row += GridCell(entry.eventName)
         row += GridCell(entry.pricing)
         row += GridCell(entry.bookingPrompt)
         row += GridCell(entry.bookingUrl)
@@ -159,7 +159,7 @@ object Conversions {
         cells += row
     }
 
-    val grid = Grid(cells, ScheduleEntry.columnNames)
+    val grid = Grid(cells, Event.columnNames)
     grid.addTableModelListener(listener)
     grid
   }
