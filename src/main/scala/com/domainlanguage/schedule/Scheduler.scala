@@ -18,15 +18,14 @@ object Scheduler extends SimpleSwingApplication {
   import Conversions._
 
   def top = {
-    new MainFrame with TableModelListener {
+    new MainFrame with TableModelListener with ScheduleExporter {
       val repository = new FileBasedScheduleRepository()
       var scheduleFile: File = null
 
       title = "Domain Language Class Scheduler"
 
       var isScheduleChanged = false
-      var schedule = Schedule()
-      var schedulePane = new SchedulePane(schedule2Grid(schedule, this))
+      var schedulePane = new SchedulePane(schedule2Grid(new Schedule(), this))
 
       val fileChooser = new FileChooser()
       fileChooser.fileSelectionMode = FileChooser.SelectionMode.FilesOnly
@@ -50,12 +49,23 @@ object Scheduler extends SimpleSwingApplication {
       })
       saveMenuItem.enabled = false
 
+      val exportHtmlMenuItem = new MenuItem(Action("Export HTML") {
+        val dirChooser = new FileChooser()
+        dirChooser.fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+        if (dirChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
+          val exportDir = dirChooser.selectedFile
+          exportDetailTable(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), exportDir)
+        }
+      })
+      exportHtmlMenuItem.enabled = false
+
       val openMenuItem = new MenuItem(Action("Open") {
         if (fileChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
           scheduleFile = fileChooser.selectedFile
-          schedule = repository.findBy(FileScheduleSpec(scheduleFile))
+          val schedule = repository.findBy(FileScheduleSpec(scheduleFile))
           schedulePane = new SchedulePane(schedule2Grid(schedule, this))
           saveMenuItem.enabled = true
+          exportHtmlMenuItem.enabled = true
           boxPanel.contents.update(0, schedulePane)
           boxPanel.revalidate()
         }
@@ -65,6 +75,8 @@ object Scheduler extends SimpleSwingApplication {
         contents += new Menu("File") {
           contents += openMenuItem
           contents += saveMenuItem
+          contents += new Separator
+          contents += exportHtmlMenuItem
           contents += new Separator
           contents += new MenuItem(Action("Quit") {
             showCloseDialog()

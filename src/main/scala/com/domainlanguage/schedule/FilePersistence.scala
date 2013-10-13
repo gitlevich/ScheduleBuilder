@@ -1,7 +1,7 @@
 package com.domainlanguage.schedule
 
 import java.io._
-import scala.io.Source
+import scala.io.{Codec, Source}
 import grizzled.slf4j.Logging
 
 /**
@@ -10,6 +10,7 @@ import grizzled.slf4j.Logging
  * Time: 17:25
  */
 trait FilePersistence extends Logging {
+  implicit val codec = Codec("UTF-8")
 
   def writeToFile(file: File, string: String) {
     withPrintWriter(file) { writer => writer.println(string)}
@@ -17,13 +18,15 @@ trait FilePersistence extends Logging {
 
   def readFromFile(file: File): String = {
     require(file != null)
-    withFileSource[String](file) { source => source.mkString }
+    withFileSource[String](file) { source => escapeWeirdSymbols(source.mkString) }
   }
 
   def readFromClasspath(fileName: String): String = {
     require(fileName != null)
-    withClassPathSource[String](fileName) { source => source.mkString }
+    withClassPathSource[String](fileName) { source => escapeWeirdSymbols(source.mkString) }
   }
+
+  private def escapeWeirdSymbols(string: String): String = string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", ";&raquo;")
 
   private def withPrintWriter(file: File)(op: PrintWriter => Unit) {
     val writer = new PrintWriter(file)

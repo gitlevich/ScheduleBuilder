@@ -7,7 +7,7 @@
             "instructor": "Eric Evans",
             "className": "DDD Overview",
             "pricing": "See QCon SF site.",
-            "bookingPrompt": "Book Online »",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
             "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C"
         },
         {
@@ -17,7 +17,7 @@
             "instructor": "Eric Evans",
             "className": "DDD Immersion",
             "pricing": "$3,090 $2,790 if booked by 8/5",
-            "bookingPrompt": "Book Online »",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
             "bookingUrl": "http://domainlanguage.com/training/schedule/DDDmNYC2014-01-21P"
         },
         {
@@ -27,7 +27,7 @@
             "instructor": "Eric Evans",
             "className": "Strategic Design",
             "pricing": "$1,850 $1,295 if booked by 12/20",
-            "bookingPrompt": "Book Online »",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
             "bookingUrl": "http://domainlanguage.com/training/schedule/SD-NYC2014-01-27P"
         },
         {
@@ -37,7 +37,7 @@
             "instructor": "Eric Evans",
             "className": "DDD Overview",
             "pricing": "See YOW site.",
-            "bookingPrompt": "Book through YOW »",
+            "bookingPrompt": "Book through YOW&nbsp;&raquo;",
             "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoYOW-C"
         },
         {
@@ -46,8 +46,8 @@
             "date": "Oct 28, 2013",
             "instructor": "Alberto Brandolini",
             "className": "DDD Foundations",
-            "pricing": "£1195 £1075 60 days prior",
-            "bookingPrompt": "Book Online »",
+            "pricing": "<strike>£1195</strike> £1075 60 days prior",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
             "bookingUrl": "http://domainlanguage.com/training/schedule/DDDfLON-P"
         }
     ]

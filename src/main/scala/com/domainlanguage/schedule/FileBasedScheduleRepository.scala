@@ -1,8 +1,6 @@
 package com.domainlanguage.schedule
 
-import java.io.{BufferedWriter, FileWriter, PrintWriter, File}
-import grizzled.slf4j.Logging
-import scala.io.Source
+import java.io.File
 
 /**
  * User: Vladimir Gitlevich
