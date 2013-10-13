@@ -74,7 +74,6 @@ object Scheduler extends SimpleSwingApplication {
           val schedule = repository.findBy(FileScheduleSpec(scheduleFile))
           schedulePane = new SchedulePane(schedule2Grid(schedule, this))
           saveMenuItem.enabled = true
-          exportHtmlMenuItem.enabled = true
           contentPanel.contents.update(0, schedulePane)
           contentPanel.revalidate()
         }
@@ -104,6 +103,7 @@ object Scheduler extends SimpleSwingApplication {
       def tableChanged(event: TableModelEvent): Unit = {
         isScheduleChanged = true
         saveMenuItem.enabled = true
+        exportHtmlMenuItem.enabled = true
       }
 
       def saveSchedule() {
