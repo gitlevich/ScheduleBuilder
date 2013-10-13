@@ -16,11 +16,6 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
     normalized(jsonString) should equal (normalized(json))
   }
 
-
-  def normalized(string: String): String = {
-    string.replaceAll("[\\t\\s]", "")
-  }
-
   @Test def shouldListEventsByCountry() {
     val schedule = Schedule.fromJsonString(json)
     
@@ -45,11 +40,25 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
     countries should contain ("UK")
   }
 
+  @Test def shouldListEventNames() {
+    val schedule = Schedule.fromJsonString(json)
+
+    val names = schedule.eventNames
+
+    names.size should be (2)
+    names should contain ("DDD Immersion")
+    names should contain ("DDD Overview")
+  }
+
   @Test def shouldListEventsByName() {
     val schedule = Schedule.fromJsonString(json)
 
     schedule.eventsByName("DDD Immersion").length should be (2)
     schedule.eventsByName("DDD Overview").length should be (1)
+  }
+
+  private def normalized(string: String): String = {
+    string.replaceAll("[\\t\\s]", "")
   }
 
   val json =

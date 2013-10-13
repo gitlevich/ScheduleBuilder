@@ -54,7 +54,7 @@ object Scheduler extends SimpleSwingApplication {
         dirChooser.fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
         if (dirChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
           val exportDir = dirChooser.selectedFile
-          exportDetailTable(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), exportDir)
+          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), exportDir)
         }
       })
       exportHtmlMenuItem.enabled = false

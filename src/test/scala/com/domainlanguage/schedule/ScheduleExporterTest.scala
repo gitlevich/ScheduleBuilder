@@ -11,15 +11,22 @@ import org.junit.Test
 class ScheduleExporterTest extends ShouldMatchersForJUnit with ScheduleExporter {
 
 
-  @Test def shouldBeInteresting() {
+  @Test def shouldProduceEventDetailsPage() {
     val schedule = new FileBasedScheduleRepository().findBy(ClassPathScheduleSpec("schedule.json"))
 
-    val actual = asDetailTable(schedule)
-    println(actual)
-    actual should equal (expected)
+    val actual = asEventsPage(schedule)
+    actual should equal (expectedDetailPage)
   }
 
-  val expected = """<h1>Schedule and pricing of Public Training</h1>
+  @Test def shouldProduceEventBriefsPage() {
+    val schedule = new FileBasedScheduleRepository().findBy(ClassPathScheduleSpec("schedule.json"))
+
+    val actual = asBriefsPage("DDD Overview",schedule)
+    println(actual)
+    actual should equal (expectedBriefPage)
+  }
+
+  private val expectedDetailPage = """<h1>Schedule and pricing of Public Training</h1>
                    |<table id="schedule">
                    |<tr style="height:1px;">
                    |    <td colspan="6">&nbsp;</td>
@@ -88,4 +95,11 @@ class ScheduleExporterTest extends ShouldMatchersForJUnit with ScheduleExporter 
                    |</table>
                    |""".stripMargin
 
+  private val expectedBriefPage = """<div class="schedule-summary">
+                  |    <ul>
+                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C">Nov 15, 2013, San Francisco, NORTH AMERICA</a></li>
+                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoYOW-C">Dec 03, 2014, Melbourne, AUSTRALIA</a></li>
+                  |    </ul>
+                  |</div>
+                  |""".stripMargin
 }

@@ -4,7 +4,7 @@ import org.scalatest.junit.ShouldMatchersForJUnit
 import org.junit.Test
 
 /**
- * This test is based on the sample schedule file /resources/schedule.json on the classpath
+ * This test is based on the sample schedule destinationDir /resources/schedule.json on the classpath
  * User: Vladimir Gitlevich
  * Date: 10/9/13
  * Time: 16:02

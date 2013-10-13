@@ -14,14 +14,36 @@ trait ScheduleExporter extends FilePersistence {
   private val detailCountryTemplate = readFromClasspath("templates/events-page-country.html")
   private val detailEventTemplate = readFromClasspath("templates/events-page-event-row.html")
   private val detailBottomTemplate = readFromClasspath("templates/events-page-footer.html")
+  
+  private val briefHeaderTemplate = readFromClasspath("templates/brief-header.html")
+  private val briefContentsTemplate = readFromClasspath("templates/brief-contents.html")
+  private val briefFooterTemplate = readFromClasspath("templates/brief-footer.html")
 
-  def exportDetailTable(schedule: Schedule, file: File) {
-    require(file.isDirectory)
+  def exportHtml(schedule: Schedule, destinationDir: File) {
+    require(destinationDir.isDirectory)
 
-    writeToFile(new File(file, detailTableFileName), asDetailTable(schedule))
+    writeToFile(new File(destinationDir, detailTableFileName), asEventsPage(schedule))
+
+    schedule.eventNames.foreach {
+      theName =>
+        writeToFile(new File(destinationDir, makeBriefPageFileName(theName)), asBriefsPage(theName, schedule))
+    }
   }
 
-  def asDetailTable(schedule: Schedule): String = {
+  def asBriefsPage(theName: String, schedule: Schedule): String = {
+    val briefsPage = new StringBuilder()
+    briefsPage.append(briefHeaderTemplate)
+
+    render(
+      briefContentsTemplate, schedule.eventsByName(theName) map (event => eventSubstitutions(event))).
+      foreach(line => briefsPage.append(line))
+
+    briefsPage.append(briefFooterTemplate)
+
+    briefsPage.toString()
+  }
+
+  def asEventsPage(schedule: Schedule): String = {
     val eventsPage = new StringBuilder()
     eventsPage.append(detailTopTemplate)
 
@@ -46,7 +68,9 @@ trait ScheduleExporter extends FilePersistence {
 
   private def eventSubstitutions(entry: Event): Map[String, String] = {
     import Schedule._
-    Map(city -> ecs(entry.city),
+    Map(
+      country -> ecs(entry.country),
+      city -> ecs(entry.city),
       date -> ecs(entry.date),
       instructor -> ecs(entry.instructor),
       eventName -> ecs(entry.eventName),
@@ -55,6 +79,8 @@ trait ScheduleExporter extends FilePersistence {
       bookingUrl -> ecs(entry.bookingUrl)
     )
   }
+
+  private def makeBriefPageFileName(name: String): String = name.toLowerCase.replaceAll(" ", "-")+"-brief.html"
 
   private def render(template: String, replacements: List[Map[String, String]]): List[String] =
     replacements.map (r => r.foldLeft(template)((s: String, x: (String, String)) =>

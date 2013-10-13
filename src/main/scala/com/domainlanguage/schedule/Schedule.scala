@@ -26,6 +26,11 @@ case class Schedule(events: List[Event] = List()) {
     all.toSet[String].toList
   }
 
+  val eventNames = {
+    val all = for(event <- events) yield event.eventName
+    all.toSet[String].toList
+  }
+
   def eventsByName(name: String): List[Event] = {
     events.filter( event => event.eventName == name)
   }
