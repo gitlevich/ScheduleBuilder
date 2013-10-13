@@ -1,6 +1,6 @@
 package com.domainlanguage.schedule
 
-import scala.swing.{ScrollPane, Table, Component, Label, Button, TextField, ListView, Alignment}
+import scala.swing.{ScrollPane, Table, Component, Label, TextField, ListView, Alignment}
 import java.awt.Dimension
 
 /**
@@ -16,7 +16,7 @@ class SchedulePane(grid: Grid) extends ScrollPane {
   val table = new Table(grid.rows.asInstanceOf[Array[Array[Any]]], grid.columnHeaders) {
     model = grid
     rowHeight = 25
-    autoResizeMode = Table.AutoResizeMode.Off
+    autoResizeMode = Table.AutoResizeMode.AllColumns
     showGrid = true
     gridColor = new java.awt.Color(150, 150, 150)
 

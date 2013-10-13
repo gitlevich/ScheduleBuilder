@@ -4,9 +4,10 @@ import scala.swing._
 import scala.collection.mutable._
 import java.io.File
 import scala.Predef._
-import scala.swing.event.ButtonClicked
 import javax.swing.event.{TableModelEvent, TableModelListener}
 import javax.swing.filechooser.FileFilter
+import scala.swing.event.ButtonClicked
+import java.awt.Dimension
 
 /**
  * User: Vladimir Gitlevich
@@ -35,12 +36,20 @@ object Scheduler extends SimpleSwingApplication {
       }
 
       val addEntryButton = new Button("Add event")
+      addEntryButton.tooltip = "Add a new event to the schedule"
       val removeEntryButton = new Button("Remove event")
+      removeEntryButton.tooltip = "Remove the currently selected event from the schedule"
 
-      val boxPanel = new BoxPanel(Orientation.Vertical) {
-        contents += schedulePane
+      val buttonPanel = new BoxPanel(Orientation.Horizontal) {
+        preferredSize = new Dimension(1150, 20)
         contents += addEntryButton
         contents += removeEntryButton
+      }
+
+      val contentPanel = new BoxPanel(Orientation.Vertical) {
+        preferredSize = new Dimension(1200, 500)
+        contents += schedulePane
+        contents += buttonPanel
         border = Swing.EmptyBorder(30, 30, 10, 30)
       }
 
@@ -66,8 +75,8 @@ object Scheduler extends SimpleSwingApplication {
           schedulePane = new SchedulePane(schedule2Grid(schedule, this))
           saveMenuItem.enabled = true
           exportHtmlMenuItem.enabled = true
-          boxPanel.contents.update(0, schedulePane)
-          boxPanel.revalidate()
+          contentPanel.contents.update(0, schedulePane)
+          contentPanel.revalidate()
         }
       })
 
@@ -90,7 +99,7 @@ object Scheduler extends SimpleSwingApplication {
         case ButtonClicked(`removeEntryButton`) => schedulePane.removeSelectedRow()
       }
 
-      contents = boxPanel
+      contents = contentPanel
 
       def tableChanged(event: TableModelEvent): Unit = {
         isScheduleChanged = true
@@ -113,7 +122,8 @@ object Scheduler extends SimpleSwingApplication {
       private def showCloseDialog() {
         if (!isScheduleChanged) quit()
 
-        Dialog.showConfirmation(parent = null,
+        Dialog.showConfirmation(
+          parent = null,
           title = "Exit",
           message = "Save schedule before exit?",
           optionType = Dialog.Options.YesNoCancel
