@@ -38,7 +38,7 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
   @Test def shouldListCountriesWhereEventsHeld() {
     val schedule = Schedule.fromJsonString(json)
 
-    val countries = schedule.listEventCountries()
+    val countries = schedule.eventCountries
 
     countries.size should be (2)
     countries should contain ("NORTH AMERICA")

@@ -21,9 +21,9 @@ case class Schedule(events: List[Event] = List()) {
     events.filter(event => event.country == country)
   }
 
-  def listEventCountries(): Set[String] = {
+  val eventCountries = {
     val all = for(event <- events) yield event.country
-    all.toSet[String]
+    all.toSet[String].toList
   }
 
   def toJsonString: String = {

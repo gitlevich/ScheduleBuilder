@@ -10,9 +10,10 @@ import java.io.File
 trait ScheduleExporter extends FilePersistence {
   private val detailTableFileName = "class-schedule-detail.html"
 
-  private val detailTop = readFromClasspath("detail-top.html")
-  private val detailRow = readFromClasspath("detail-table-row.html")
-  private val detailBottom = readFromClasspath("detail-bottom.html")
+  private val detailTop = readFromClasspath("templates/events-page-header.html")
+  private val detailCountry = readFromClasspath("templates/events-page-country.html")
+  private val detailRow = readFromClasspath("templates/events-page-event-row.html")
+  private val detailBottom = readFromClasspath("templates/events-page-footer.html")
 
   def exportDetailTable(schedule: Schedule, file: File) {
     require(file.isDirectory)
@@ -20,31 +21,39 @@ trait ScheduleExporter extends FilePersistence {
     writeToFile(new File(file, detailTableFileName), asDetailTable(schedule))
   }
 
-  def asDetailTable(schedule: Schedule): String = {
-    import Schedule._
-    val replacements = schedule.events map {
-      entry =>
-        Map(country -> ecs(entry.country),
-          city -> ecs(entry.city),
-          date -> ecs(entry.date),
-          instructor -> ecs(entry.instructor),
-          eventName -> ecs(entry.eventName),
-          pricing -> ecs(entry.pricing),
-          bookingPrompt -> ecs(entry.bookingPrompt),
-          bookingUrl -> ecs(entry.bookingUrl)
-        )
-    }
-
-    val result = render(detailRow, replacements)
-
-    val sb = new StringBuilder()
-    sb.append(detailTop)
-    result.foreach(r => sb.append(r))
-    sb.append(detailBottom)
-
-    sb.toString()
+  def countrySubstitutions(theCountry: String): List[Map[String, String]] = {
+    List(Map(Schedule.country -> theCountry))
   }
 
+  def asDetailTable(schedule: Schedule): String = {
+
+    val eventsPage = new StringBuilder()
+    eventsPage.append(detailTop)
+
+    schedule.eventCountries.foreach {
+      theCountry =>
+        val countryAttributeMap = countrySubstitutions(theCountry)
+        val eventAttributeMap = schedule.eventsByCountry(theCountry) map (event => eventSubstitutions(event))
+        render(detailCountry, countryAttributeMap).foreach(line => eventsPage.append(line))
+        render(detailRow, eventAttributeMap).foreach(line => eventsPage.append(line))
+    }
+    eventsPage.append(detailBottom)
+
+    eventsPage.toString()
+  }
+
+
+  private def eventSubstitutions(entry: Event): Map[String, String] = {
+    import Schedule._
+    Map(city -> ecs(entry.city),
+      date -> ecs(entry.date),
+      instructor -> ecs(entry.instructor),
+      eventName -> ecs(entry.eventName),
+      pricing -> ecs(entry.pricing),
+      bookingPrompt -> ecs(entry.bookingPrompt),
+      bookingUrl -> ecs(entry.bookingUrl)
+    )
+  }
 
   private def render(template: String, replacements: List[Map[String, String]]): List[String] =
     replacements.map (r => r.foldLeft(template)((s: String, x: (String, String)) =>
