@@ -1,1 +1,37 @@
-This file was created by IntelliJ IDEA 12.1.6 for binding GitHub repository
+ScheduleBuilder is a tool to create class schedules.
+
+The schedule is represented as a table, each row in the table is an event.
+
+The program launches with an empty table, ready for creating a new schedule. To add a new event to the schedule,
+click "Add Event" button, click inside a cell in the table and enter the desired text.
+
+To remove an event from the schedule, click inside any cell of the row representing the event you want to remove
+and press "Remove Event" button.
+
+To save the schedule, select File->Save menu. If this is a new schedule (one you have not saved), you will be
+prompted to choose a file where you want to save it. Select the directory you want and name the file. You must
+give the file ".json" extension (e.g. my-schedule.json).
+
+To open a previously saved schedule, select File->Open menu and navigate to the schedule file that you want to open,
+select it and click Open button.
+
+Once you are ready to export the PHP fragments, choose File->Export HTML, choose the directory where you want to save
+them and hit Choose button. The following files will be saved in the directory you've chosen:
+
+Detail file that contains an HTML table with the entire class schedule:
+class-schedule-detail.php - this
+
+Brief files with the schedule of a particular class, such as
+ddd-foundations-brief.php, ddd-immersion-brief.php, ... The file name is derived from the class' name (e.g.
+a class named "DDD Foundations" will result in the file named ddd-foundations-brief.php). ScheduleBuilder will
+create as many brief files as there are distinct class types (meaning classes with different names).
+
+To exit the tool, select File->Quit menu item. If the schedule has changed since the last save, you will be
+presented with a Save dialog. Choose Yes button to save, No to exit without saving, and Cancel to return to
+the program without quitting.
+
+The tool at this point does not support FTP-ing the files to the server, so you will have to upload them
+manually.
+
+Known problem: if you exit the application by pressing Cmd-Q (Mac) or Ctrl-Q (Windows), you will not be prompted
+to save the file, so your changes will be lost. Please always select File->Quit menu until the bug is fixed.

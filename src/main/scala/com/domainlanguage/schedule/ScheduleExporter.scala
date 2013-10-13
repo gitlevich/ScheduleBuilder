@@ -8,7 +8,7 @@ import java.io.File
  * Time: 16:50
  */
 trait ScheduleExporter extends FilePersistence {
-  private val detailTableFileName = "class-schedule-detail.html"
+  private val detailTableFileName = "class-schedule-detail.php"
 
   private val detailTopTemplate = readFromClasspath("templates/events-page-header.html")
   private val detailCountryTemplate = readFromClasspath("templates/events-page-country.html")
@@ -80,7 +80,7 @@ trait ScheduleExporter extends FilePersistence {
     )
   }
 
-  private def makeBriefPageFileName(name: String): String = name.toLowerCase.replaceAll(" ", "-")+"-brief.html"
+  private def makeBriefPageFileName(name: String): String = name.toLowerCase.replaceAll(" ", "-")+"-brief.php"
 
   private def render(template: String, replacements: List[Map[String, String]]): List[String] =
     replacements.map (r => r.foldLeft(template)((s: String, x: (String, String)) =>
@@ -90,3 +90,5 @@ trait ScheduleExporter extends FilePersistence {
     string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", "&raquo;")
 
 }
+
+
