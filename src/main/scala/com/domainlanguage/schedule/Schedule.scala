@@ -26,6 +26,10 @@ case class Schedule(events: List[Event] = List()) {
     all.toSet[String].toList
   }
 
+  def eventsByName(name: String): List[Event] = {
+    events.filter( event => event.eventName == name)
+  }
+
   def toJsonString: String = {
     val entriesJson = for(entry <- events) yield entry.toJsonString
     s"""{

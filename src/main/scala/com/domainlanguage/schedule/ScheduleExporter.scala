@@ -10,10 +10,10 @@ import java.io.File
 trait ScheduleExporter extends FilePersistence {
   private val detailTableFileName = "class-schedule-detail.html"
 
-  private val detailTop = readFromClasspath("templates/events-page-header.html")
-  private val detailCountry = readFromClasspath("templates/events-page-country.html")
-  private val detailRow = readFromClasspath("templates/events-page-event-row.html")
-  private val detailBottom = readFromClasspath("templates/events-page-footer.html")
+  private val detailTopTemplate = readFromClasspath("templates/events-page-header.html")
+  private val detailCountryTemplate = readFromClasspath("templates/events-page-country.html")
+  private val detailEventTemplate = readFromClasspath("templates/events-page-event-row.html")
+  private val detailBottomTemplate = readFromClasspath("templates/events-page-footer.html")
 
   def exportDetailTable(schedule: Schedule, file: File) {
     require(file.isDirectory)
@@ -21,27 +21,28 @@ trait ScheduleExporter extends FilePersistence {
     writeToFile(new File(file, detailTableFileName), asDetailTable(schedule))
   }
 
-  def countrySubstitutions(theCountry: String): List[Map[String, String]] = {
-    List(Map(Schedule.country -> theCountry))
-  }
-
   def asDetailTable(schedule: Schedule): String = {
-
     val eventsPage = new StringBuilder()
-    eventsPage.append(detailTop)
+    eventsPage.append(detailTopTemplate)
 
     schedule.eventCountries.foreach {
       theCountry =>
-        val countryAttributeMap = countrySubstitutions(theCountry)
-        val eventAttributeMap = schedule.eventsByCountry(theCountry) map (event => eventSubstitutions(event))
-        render(detailCountry, countryAttributeMap).foreach(line => eventsPage.append(line))
-        render(detailRow, eventAttributeMap).foreach(line => eventsPage.append(line))
+        render(detailCountryTemplate, countrySubstitutions(theCountry)).
+          foreach(line => eventsPage.append(line))
+
+        render(
+          detailEventTemplate, schedule.eventsByCountry(theCountry) map (event => eventSubstitutions(event))).
+            foreach(line => eventsPage.append(line))
     }
-    eventsPage.append(detailBottom)
+
+    eventsPage.append(detailBottomTemplate)
 
     eventsPage.toString()
   }
 
+
+  private def countrySubstitutions(theCountry: String): List[Map[String, String]] =
+    List(Map(Schedule.country -> theCountry))
 
   private def eventSubstitutions(entry: Event): Map[String, String] = {
     import Schedule._
