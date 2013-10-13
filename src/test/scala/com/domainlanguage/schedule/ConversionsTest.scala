@@ -15,19 +15,19 @@ class ConversionsTest extends ShouldMatchersForJUnit {
     GridCell("f"), GridCell("g"), GridCell("h")))
 
   @Test def shouldConvertGridToSchedule(): Unit = {
-    val grid = Grid(cells, ScheduleEntry.columnNames)
+    val grid = Grid(cells, Event.columnNames)
 
     val schedule = Conversions.grid2Schedule(grid)
 
     schedule should not be null
-    schedule.entryCount should be (1)
+    schedule.eventCount should be (1)
 
-    val entry = schedule.entries(0)
+    val entry = schedule.events(0)
     entry.country should be ("a")
     entry.city should be ("b")
     entry.date should be ("c")
     entry.instructor should be ("d")
-    entry.entryName should be ("e")
+    entry.eventName should be ("e")
     entry.pricing should be ("f")
     entry.bookingPrompt should be ("g")
     entry.bookingUrl should be ("h")
