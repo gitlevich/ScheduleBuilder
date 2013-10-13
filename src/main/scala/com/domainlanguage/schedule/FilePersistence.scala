@@ -18,15 +18,13 @@ trait FilePersistence extends Logging {
 
   def readFromFile(file: File): String = {
     require(file != null)
-    withFileSource[String](file) { source => escapeWeirdSymbols(source.mkString) }
+    withFileSource[String](file) { source => source.mkString }
   }
 
   def readFromClasspath(fileName: String): String = {
     require(fileName != null)
-    withClassPathSource[String](fileName) { source => escapeWeirdSymbols(source.mkString) }
+    withClassPathSource[String](fileName) { source => source.mkString }
   }
-
-  private def escapeWeirdSymbols(string: String): String = string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", ";&raquo;")
 
   private def withPrintWriter(file: File)(op: PrintWriter => Unit) {
     val writer = new PrintWriter(file)

@@ -23,14 +23,14 @@ trait ScheduleExporter extends FilePersistence {
   def asDetailTable(schedule: Schedule): String = {
     val replacements = schedule.entries map {
       entry =>
-        Map("country" -> entry.country,
-          "city" -> entry.city,
-          "date" -> entry.date,
-          "instructor" -> entry.instructor,
-          "entryName" -> entry.entryName,
-          "pricing" -> entry.pricing,
-          "bookingPrompt" -> entry.bookingPrompt,
-          "bookingUrl" -> entry.bookingUrl
+        Map("country" -> ecs(entry.country),
+          "city" -> ecs(entry.city),
+          "date" -> ecs(entry.date),
+          "instructor" -> ecs(entry.instructor),
+          "entryName" -> ecs(entry.entryName),
+          "pricing" -> ecs(entry.pricing),
+          "bookingPrompt" -> ecs(entry.bookingPrompt),
+          "bookingUrl" -> ecs(entry.bookingUrl)
         )
     }
 
@@ -45,4 +45,7 @@ trait ScheduleExporter extends FilePersistence {
 
     sb.toString()
   }
+
+  private def ecs(string: String): String = string.replaceAll("\\$", "&#36;").replace("£", "&#163;").replace("»", "&raquo;")
+
 }
