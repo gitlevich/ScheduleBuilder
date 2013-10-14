@@ -18,11 +18,11 @@ case class Schedule(events: List[Event] = List()) {
   }
 
   def eventsByCountry(country: String): List[Event] = {
-    events.filter(event => event.country == country)
+    events.filter(event => event.region == country)
   }
 
   val eventCountries = {
-    val all = for(event <- events) yield event.country
+    val all = for(event <- events) yield event.region
     all.toSet[String].toList
   }
 
@@ -45,12 +45,13 @@ case class Schedule(events: List[Event] = List()) {
   }
 }
 
-case class Event(country: String, city: String, date: String, instructor: String, eventName: String,
+case class Event(region: String, state: String, city: String, date: String, instructor: String, eventName: String,
                          pricing: String, bookingPrompt: String, bookingUrl: String) {
 
   def toJsonString: String =
     s""" {
-            "${Schedule.country}": "$country",
+            "${Schedule.region}": "$region",
+            "${Schedule.state}": "$state",
             "${Schedule.city}": "$city",
             "${Schedule.date}": "$date",
             "${Schedule.instructor}": "$instructor",
@@ -62,7 +63,8 @@ case class Event(country: String, city: String, date: String, instructor: String
 }
 
 object Schedule {
-  val country = "country"
+  val region = "region"
+  val state = "state"
   val city = "city"
   val date = "date"
   val instructor = "instructor"
@@ -79,12 +81,12 @@ object Schedule {
   }
 
   private def toEvent(m: Map[String, String]): Event = {
-    Event(m(country), m(city), m(date), m(instructor), m(eventName), m(pricing), m(bookingPrompt), m(bookingUrl))
+    Event(m(region), m(state), m(city), m(date), m(instructor), m(eventName), m(pricing), m(bookingPrompt), m(bookingUrl))
   }
 }
 
 object Event {
-  val columnNames: Array[String] = Array("Country", "City", "Date", "Instructor", "Entry Name", "Pricing",
+  val columnNames: Array[String] = Array("Region", "State/Country", "City", "Date", "Instructor", "Entry Name", "Pricing",
     "Booking Prompt", "Booking link")
 }
 

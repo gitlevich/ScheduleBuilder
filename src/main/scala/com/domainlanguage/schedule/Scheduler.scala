@@ -29,7 +29,6 @@ object Scheduler extends SimpleSwingApplication {
       var schedulePane = new SchedulePane(schedule2Grid(new Schedule(), this))
 
       val fileChooser = new FileChooser()
-      fileChooser.fileSelectionMode = FileChooser.SelectionMode.FilesOnly
       fileChooser.fileFilter = new FileFilter() {
         override def accept(f: File): Boolean = f.getName.endsWith(".json")
         override def getDescription = "json files (.json)"
@@ -61,9 +60,13 @@ object Scheduler extends SimpleSwingApplication {
       val exportHtmlMenuItem = new MenuItem(Action("Export HTML") {
         val dirChooser = new FileChooser()
         dirChooser.fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+        dirChooser.fileHidingEnabled = true
+        dirChooser.fileFilter = new FileFilter {
+          def accept(file: File) = file.isDirectory
+          def getDescription = "Directories only"
+        }
         if (dirChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
-          val exportDir = dirChooser.selectedFile
-          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), exportDir)
+          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), dirChooser.selectedFile)
         }
       })
       exportHtmlMenuItem.enabled = false
@@ -74,6 +77,7 @@ object Scheduler extends SimpleSwingApplication {
           val schedule = repository.findBy(FileScheduleSpec(scheduleFile))
           schedulePane = new SchedulePane(schedule2Grid(schedule, this))
           saveMenuItem.enabled = true
+          exportHtmlMenuItem.enabled = true
           contentPanel.contents.update(0, schedulePane)
           contentPanel.revalidate()
         }
@@ -146,7 +150,7 @@ object Conversions {
   def grid2Schedule(grid: Grid): Schedule = {
 
     val entries = for (r <- grid.rows)
-    yield Event(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value)
+      yield Event(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value, r(8).value)
 
     Schedule(entries.toList)
   }
@@ -157,7 +161,8 @@ object Conversions {
     schedule.events.foreach {
       entry =>
         val row = ListBuffer[GridCell]()
-        row += GridCell(entry.country)
+        row += GridCell(entry.region)
+        row += GridCell(entry.state)
         row += GridCell(entry.city)
         row += GridCell(entry.date)
         row += GridCell(entry.instructor)

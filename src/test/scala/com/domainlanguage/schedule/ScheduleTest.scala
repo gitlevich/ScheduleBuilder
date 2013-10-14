@@ -66,7 +66,8 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
       |{
       |    "schedule": [
       |        {
-      |            "country": "NORTH AMERICA",
+      |            "region": "NORTH AMERICA",
+      |            "state": "CA",
       |            "city": "San Francisco",
       |            "date": "Nov 15, 2013",
       |            "instructor": "Eric Evans",
@@ -76,7 +77,8 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
       |            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C"
       |        },
       |        {
-      |            "country": "NORTH AMERICA",
+      |            "region": "NORTH AMERICA",
+      |            "state": "NY",
       |            "city": "New York",
       |            "date": "Jan 21, 2014",
       |            "instructor": "Eric Evans",
@@ -86,7 +88,8 @@ class ScheduleTest extends ShouldMatchersForJUnit with FilePersistence {
       |            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDmNYC2014-01-21P"
       |        },
       |        {
-      |            "country": "UK",
+      |            "region": "UK",
+      |            "state": "UK",
       |            "city": "London",
       |            "date": "Jan 21, 2014",
       |            "instructor": "Someone Else",
