@@ -9,6 +9,7 @@ import scala.swing.event.ButtonClicked
 import java.awt.Dimension
 import grizzled.slf4j.Logging
 import Conversions._
+import java.lang.Exception
 
 /**
  * User: Vladimir Gitlevich
@@ -17,22 +18,28 @@ import Conversions._
  */
 object Scheduler extends SimpleSwingApplication with Logging {
 
-  val config = SchedulerConfiguration(new File("./workspace"), "schedule.json")
+  val repository = new FileBasedScheduleRepository()
+  val config = SchedulerConfiguration(new File("workspace"), "schedule.json")
+
   SetUp(config).setUp() match {
     case Some(error) => {
-      Dialog.showMessage(message = error, messageType = Dialog.Message.Error)
-      quit()
+      showErrorAndQuit(error)
     }
     case None =>
   }
 
   def top = {
     new MainFrame with TableModelListener with ScheduleExporter {
-      val repository = new FileBasedScheduleRepository()
 
       title = "Domain Language Class Scheduler"
 
-      var schedulePane = new SchedulePane(schedule2Grid(repository.findBy(FileScheduleSpec(config.scheduleFile)), this))
+      var schedulePane: SchedulePane = null
+        loadSchedule() match {
+          case Left(schedule) =>
+            schedulePane = new SchedulePane(schedule2Grid(schedule, this))
+          case Right(e) =>
+            showErrorAndQuit(s"Unable to open schedule file ${config.scheduleFile.getAbsoluteFile}\n${e.getMessage}")
+        }
 
       val addEntryButton = new Button("Add event")
       addEntryButton.tooltip = "Add a new event to the schedule"
@@ -86,9 +93,28 @@ object Scheduler extends SimpleSwingApplication with Logging {
       }
     }
   }
+
+
+
+  private def showErrorAndQuit(error: String) {
+    Dialog.showMessage(message = error, messageType = Dialog.Message.Error)
+    quit()
+  }
+
+  private def loadSchedule(): Either[Schedule, Exception] = {
+    try {
+      Left(repository.findBy(FileScheduleSpec(config.scheduleFile)))
+    }
+    catch {
+      case e: Exception =>
+        error(s"Unable to open schedule file ${config.scheduleFile}", e)
+        Right(e)
+    }
+  }
+
 }
 
-case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
+case class SetUp(config: SchedulerConfiguration) extends FilePersistence with Logging {
   def setUp(): Option[String] = {
     debug(s"""Work dir: "${config.workingDir.getCanonicalPath}", schedule: "${config.properties}", props: "${config.properties}""")
 
@@ -99,17 +125,23 @@ case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
 
     if(!config.scheduleFile.exists()) {
       config.scheduleFile.getParentFile.mkdirs()
-      writeToFile(config.scheduleFile, readFromClasspath("schedule.json"))
-      debug(s"Created sample schedule file ${config.scheduleFile}")
+      try {
+        writeToFile(config.scheduleFile, readFromClasspath("schedule.json"))
+        debug(s"Created sample schedule file ${config.scheduleFile}")
+      }
+      catch {
+        case e: Exception =>
+          errors += e.getMessage
+          error(s"Unable to create ${config.scheduleFile}", e)
+      }
     }
 
     if(errors.isEmpty) None else Some(errors.mkString("\n"))
   }
-
 }
 
 case class SchedulerConfiguration(workingDir: File, scheduleFileName: String) {
-  val scheduleFile = new File(workingDir, s"$scheduleFileName")
+  val scheduleFile = new File(workingDir, scheduleFileName)
   val properties = new File(workingDir, "scheduler.properties")
 }
 

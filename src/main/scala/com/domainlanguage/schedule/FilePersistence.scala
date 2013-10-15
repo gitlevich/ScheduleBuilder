@@ -4,6 +4,7 @@ import java.io._
 import scala.io.{Codec, Source}
 import grizzled.slf4j.Logging
 import java.util.Properties
+import scalax.io._
 
 /**
  * User: Vladimir Gitlevich
@@ -14,18 +15,14 @@ trait FilePersistence extends Logging {
   implicit val codec = Codec("UTF-8")
 
   def writeToFile(file: File, string: String) {
-    withPrintWriter(file) { writer => writer.println(string)}
+    Resource.fromFile(file).write(string)
   }
 
-  def readFromFile(file: File): String = {
-    require(file != null)
+  def readFromFile(file: File): String =
     withFileSource[String](file) { source => source.mkString }
-  }
 
-  def readFromClasspath(fileName: String): String = {
-    require(fileName != null)
+  def readFromClasspath(fileName: String): String =
     withClassPathSource[String](fileName) { source => source.mkString }
-  }
 
   def loadProperties(file: File): Properties = {
     withFileReader[Properties](file)  {
@@ -33,16 +30,6 @@ trait FilePersistence extends Logging {
         val props = new Properties()
         props.load(reader)
         props
-    }
-  }
-
-  private def withPrintWriter(file: File)(op: PrintWriter => Unit) {
-    val writer = new PrintWriter(file)
-    try {
-      op(writer)
-    }
-    finally {
-      writer.close()
     }
   }
 
