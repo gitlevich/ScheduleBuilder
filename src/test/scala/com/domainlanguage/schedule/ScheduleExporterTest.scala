@@ -15,6 +15,7 @@ class ScheduleExporterTest extends ShouldMatchersForJUnit with ScheduleExporter 
     val schedule = new FileBasedScheduleRepository().findBy(ClassPathScheduleSpec("schedule.json"))
 
     val actual = asEventsPage(schedule)
+    println(actual)
     actual should equal (expectedDetailPage)
   }
 
@@ -97,8 +98,8 @@ class ScheduleExporterTest extends ShouldMatchersForJUnit with ScheduleExporter 
 
   private val expectedBriefPage = """<div class="schedule-summary">
                   |    <ul>
-                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C">Nov 15, 2013, San Francisco, NORTH AMERICA</a></li>
-                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoYOW-C">Dec 03, 2014, Melbourne, AUSTRALIA</a></li>
+                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C">Nov 15, 2013, San Francisco, CA</a></li>
+                  |        <li><a href="http://domainlanguage.com/training/schedule/DDDoYOW-C">Dec 03, 2014, Melbourne, Australia</a></li>
                   |    </ul>
                   |</div>
                   |""".stripMargin

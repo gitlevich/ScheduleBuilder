@@ -11,8 +11,18 @@ import scala.collection.mutable.ListBuffer
  */
 class ConversionsTest extends ShouldMatchersForJUnit {
 
-  val cells = ListBuffer(ListBuffer(GridCell("a"), GridCell("b"), GridCell("c"), GridCell("d"), GridCell("e"),
-    GridCell("f"), GridCell("g"), GridCell("h")))
+  import Schedule._
+  val cells = ListBuffer(
+    ListBuffer(
+      GridCell(region),
+      GridCell(state),
+      GridCell(city),
+      GridCell(date),
+      GridCell(instructor),
+      GridCell(eventName),
+      GridCell(pricing),
+      GridCell(bookingPrompt),
+      GridCell(bookingUrl)))
 
   @Test def shouldConvertGridToSchedule(): Unit = {
     val grid = Grid(cells, Event.columnNames)
@@ -23,14 +33,15 @@ class ConversionsTest extends ShouldMatchersForJUnit {
     schedule.eventCount should be (1)
 
     val entry = schedule.events(0)
-    entry.country should be ("a")
-    entry.city should be ("b")
-    entry.date should be ("c")
-    entry.instructor should be ("d")
-    entry.eventName should be ("e")
-    entry.pricing should be ("f")
-    entry.bookingPrompt should be ("g")
-    entry.bookingUrl should be ("h")
+    entry.region should be (region)
+    entry.state should be (state)
+    entry.city should be (city)
+    entry.date should be (date)
+    entry.instructor should be (instructor)
+    entry.eventName should be (eventName)
+    entry.pricing should be (pricing)
+    entry.bookingPrompt should be (bookingPrompt)
+    entry.bookingUrl should be (bookingUrl)
   }
 
 }

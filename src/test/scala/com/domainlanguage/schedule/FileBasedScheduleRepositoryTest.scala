@@ -25,7 +25,7 @@ class FileBasedScheduleRepositoryTest extends ShouldMatchersForJUnit {
     schedule.eventCount should equal (5)
 
     val firstEntry = schedule.events(0)
-    firstEntry.country should be ("NORTH AMERICA")
+    firstEntry.region should be ("NORTH AMERICA")
     firstEntry.city should be ("San Francisco")
     firstEntry.date should be ("Nov 15, 2013")
     firstEntry.instructor should be ("Eric Evans")

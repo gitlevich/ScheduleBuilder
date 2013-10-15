@@ -64,12 +64,13 @@ trait ScheduleExporter extends FilePersistence {
 
 
   private def countrySubstitutions(theCountry: String): List[Map[String, String]] =
-    List(Map(Schedule.country -> theCountry))
+    List(Map(Schedule.region -> theCountry))
 
   private def eventSubstitutions(entry: Event): Map[String, String] = {
     import Schedule._
     Map(
-      country -> ecs(entry.country),
+      region -> ecs(entry.region),
+      state -> ecs(entry.state),
       city -> ecs(entry.city),
       date -> ecs(entry.date),
       instructor -> ecs(entry.instructor),

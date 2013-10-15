@@ -58,7 +58,11 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
 }
 
 object Grid {
-  def emptyRow = ListBuffer(GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell(), GridCell())
+  def emptyRow = {
+    val cells = ListBuffer[GridCell]()
+    Event.columnNames.foreach(column => cells += GridCell())
+    cells
+  }
 }
 
 case class GridCell(value: String = "")

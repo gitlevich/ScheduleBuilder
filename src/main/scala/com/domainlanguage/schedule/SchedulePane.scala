@@ -20,8 +20,6 @@ class SchedulePane(grid: Grid) extends ScrollPane {
     showGrid = true
     gridColor = new java.awt.Color(150, 150, 150)
 
-    minimumSize = new Dimension(500, 300)
-
     override def rendererComponent(isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component =
       if (hasFocus) {
         selectedRow = Option(row)

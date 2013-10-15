@@ -5,38 +5,38 @@ import scala.collection.mutable._
 import java.io.File
 import scala.Predef._
 import javax.swing.event.{TableModelEvent, TableModelListener}
-import javax.swing.filechooser.FileFilter
 import scala.swing.event.ButtonClicked
 import java.awt.Dimension
+import grizzled.slf4j.Logging
+import Conversions._
 
 /**
  * User: Vladimir Gitlevich
  * Date: 10/8/13
  * Time: 23:27
  */
-object Scheduler extends SimpleSwingApplication {
+object Scheduler extends SimpleSwingApplication with Logging {
 
-  import Conversions._
+  val config = SchedulerConfiguration(new File("./workspace"), "schedule.json")
+  SetUp(config).setUp() match {
+    case Some(error) => {
+      Dialog.showMessage(message = error)
+      quit()
+    }
+    case None =>
+  }
 
   def top = {
     new MainFrame with TableModelListener with ScheduleExporter {
       val repository = new FileBasedScheduleRepository()
-      var scheduleFile: File = null
 
       title = "Domain Language Class Scheduler"
 
-      var isScheduleChanged = false
-      var schedulePane = new SchedulePane(schedule2Grid(new Schedule(), this))
-
-      val fileChooser = new FileChooser()
-      fileChooser.fileSelectionMode = FileChooser.SelectionMode.FilesOnly
-      fileChooser.fileFilter = new FileFilter() {
-        override def accept(f: File): Boolean = f.getName.endsWith(".json")
-        override def getDescription = "json files (.json)"
-      }
+      var schedulePane = new SchedulePane(schedule2Grid(repository.findBy(FileScheduleSpec(config.scheduleFile)), this))
 
       val addEntryButton = new Button("Add event")
       addEntryButton.tooltip = "Add a new event to the schedule"
+
       val removeEntryButton = new Button("Remove event")
       removeEntryButton.tooltip = "Remove the currently selected event from the schedule"
 
@@ -53,42 +53,22 @@ object Scheduler extends SimpleSwingApplication {
         border = Swing.EmptyBorder(30, 30, 10, 30)
       }
 
-      val saveMenuItem = new MenuItem(Action("Save") {
-        saveSchedule()
+      val exportMenuItem = new MenuItem(Action("Export") {
+          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.workingDir)
       })
-      saveMenuItem.enabled = false
 
-      val exportHtmlMenuItem = new MenuItem(Action("Export HTML") {
-        val dirChooser = new FileChooser()
-        dirChooser.fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
-        if (dirChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
-          val exportDir = dirChooser.selectedFile
-          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), exportDir)
-        }
-      })
-      exportHtmlMenuItem.enabled = false
-
-      val openMenuItem = new MenuItem(Action("Open") {
-        if (fileChooser.showOpenDialog(schedulePane) == FileChooser.Result.Approve) {
-          scheduleFile = fileChooser.selectedFile
-          val schedule = repository.findBy(FileScheduleSpec(scheduleFile))
-          schedulePane = new SchedulePane(schedule2Grid(schedule, this))
-          saveMenuItem.enabled = true
-          exportHtmlMenuItem.enabled = true
-          contentPanel.contents.update(0, schedulePane)
-          contentPanel.revalidate()
-        }
+      val exportAndPublishMenuItem = new MenuItem(Action("Export and Publish") {
+        exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.workingDir)
+        // TODO add publishing bit
       })
 
       menuBar = new MenuBar {
         contents += new Menu("File") {
-          contents += openMenuItem
-          contents += saveMenuItem
-          contents += new Separator
-          contents += exportHtmlMenuItem
+          contents += exportMenuItem
+          contents += exportAndPublishMenuItem
           contents += new Separator
           contents += new MenuItem(Action("Quit") {
-            showCloseDialog()
+            quit()
           })
         }
       }
@@ -101,44 +81,36 @@ object Scheduler extends SimpleSwingApplication {
 
       contents = contentPanel
 
-      def tableChanged(event: TableModelEvent): Unit = {
-        isScheduleChanged = true
-        saveMenuItem.enabled = true
-      }
-
-      def saveSchedule() {
-        if (isScheduleChanged) {
-          if (scheduleFile == null && fileChooser.showSaveDialog(schedulePane) == FileChooser.Result.Approve) {
-              scheduleFile = fileChooser.selectedFile
-          }
-
-          if (scheduleFile != null) {
-            repository.save(scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
-            isScheduleChanged = false
-          }
-        }
-      }
-
-      private def showCloseDialog() {
-        if (!isScheduleChanged) quit()
-
-        Dialog.showConfirmation(
-          parent = null,
-          title = "Exit",
-          message = "Save schedule before exit?",
-          optionType = Dialog.Options.YesNoCancel
-        ) match {
-          case Dialog.Result.Yes =>
-            saveSchedule()
-            quit()
-          case Dialog.Result.No =>
-            quit()
-          case _ => ()
-        }
+      def tableChanged(event: TableModelEvent) {
+        repository.save(config.scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
       }
     }
   }
+}
 
+case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
+  def setUp(): Option[String] = {
+    debug(s"""Work dir: "${config.workingDir.getCanonicalPath}", schedule: "${config.properties}", props: "${config.properties}""")
+
+    val errors = ListBuffer[String]()
+    if(!config.properties.exists()) {
+      errors += s"""Properties file "${config.properties.getAbsoluteFile}" is missing"""
+    }
+
+    if(!config.scheduleFile.exists()) {
+      config.scheduleFile.getParentFile.mkdirs()
+      writeToFile(config.scheduleFile, readFromClasspath("schedule.json"))
+      debug(s"Created sample schedule file ${config.scheduleFile}")
+    }
+
+    if(errors.isEmpty) None else Some(errors.mkString("\n"))
+  }
+
+}
+
+case class SchedulerConfiguration(workingDir: File, scheduleFileName: String) {
+  val scheduleFile = new File(workingDir, s"$scheduleFileName")
+  val properties = new File(workingDir, "scheduler.properties")
 }
 
 
@@ -146,7 +118,7 @@ object Conversions {
   def grid2Schedule(grid: Grid): Schedule = {
 
     val entries = for (r <- grid.rows)
-    yield Event(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value)
+      yield Event(r(0).value, r(1).value, r(2).value, r(3).value, r(4).value, r(5).value, r(6).value, r(7).value, r(8).value)
 
     Schedule(entries.toList)
   }
@@ -157,7 +129,8 @@ object Conversions {
     schedule.events.foreach {
       entry =>
         val row = ListBuffer[GridCell]()
-        row += GridCell(entry.country)
+        row += GridCell(entry.region)
+        row += GridCell(entry.state)
         row += GridCell(entry.city)
         row += GridCell(entry.date)
         row += GridCell(entry.instructor)
