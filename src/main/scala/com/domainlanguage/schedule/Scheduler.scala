@@ -90,15 +90,11 @@ object Scheduler extends SimpleSwingApplication with Logging {
 
 case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
   def setUp(): Option[String] = {
-    debug(s"""
-    |Launched with working dir ${config.workingDir.getCanonicalPath},
-    | schedule file ${config.properties.getCanonicalPath}
-    | and properties ${config.properties.getCanonicalPath}""".stripMargin)
+    debug(s"""Work dir: "${config.workingDir.getCanonicalPath}", schedule: "${config.properties}", props: "${config.properties}""")
 
     val errors = ListBuffer[String]()
     if(!config.properties.exists()) {
       errors += s"""Properties file "${config.properties.getAbsoluteFile}" is missing"""
-      debug(s"properties file ${config.properties} not found")
     }
 
     if(!config.scheduleFile.exists()) {
@@ -107,7 +103,6 @@ case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
       debug(s"Created sample schedule file ${config.scheduleFile}")
     }
 
-    debug(s"errors = $errors")
     if(errors.isEmpty) None else Some(errors.mkString("\n"))
   }
 
