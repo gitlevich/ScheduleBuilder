@@ -4,7 +4,7 @@ import java.io._
 import scala.io.{Codec, Source}
 import grizzled.slf4j.Logging
 import java.util.Properties
-import scalax.io._
+import org.apache.commons.io.FileUtils
 
 /**
  * User: Vladimir Gitlevich
@@ -12,10 +12,11 @@ import scalax.io._
  * Time: 17:25
  */
 trait FilePersistence extends Logging {
-  implicit val codec = Codec("UTF-8")
+  private val utf8 = "UTF-8"
+  implicit val codec = Codec(utf8)
 
   def writeToFile(file: File, string: String) {
-    Resource.fromFile(file).write(string)
+    FileUtils.writeStringToFile(file, string, utf8)
   }
 
   def readFromFile(file: File): String =
