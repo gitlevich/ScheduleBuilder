@@ -1,0 +1,70 @@
+{
+    "schedule": [  {
+            "region": "NORTH AMERICA",
+            "state": "CA",
+            "city": "San Francisco",
+            "date": "Nov 15, 2013",
+            "instructor": "Eric Evans",
+            "eventName": "DDD Overview",
+            "pricing": "See QCon SF site.",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
+            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C"
+        } ,
+	 {
+            "region": "NORTH AMERICA",
+            "state": "NY",
+            "city": "New York",
+            "date": "Jan 21, 2014",
+            "instructor": "Eric Evans",
+            "eventName": "DDD Immersion",
+            "pricing": "$3,090 $2,790 if booked by 8/5",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
+            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDmNYC2014-01-21P"
+        } ,
+	 {
+            "region": "NORTH AMERICA",
+            "state": "NY",
+            "city": "New York",
+            "date": "Jan 27, 2014",
+            "instructor": "Eric Evans",
+            "eventName": "Strategic Design",
+            "pricing": "$1,850 $1,295 if booked by 12/20",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
+            "bookingUrl": "http://domainlanguage.com/training/schedule/SD-NYC2014-01-27P"
+        } ,
+	 {
+            "region": "AUSTRALIA",
+            "state": "Australia",
+            "city": "Melbourne",
+            "date": "Dec 03, 2014",
+            "instructor": "Eric Evans",
+            "eventName": "DDD Overview",
+            "pricing": "See YOW site.",
+            "bookingPrompt": "Book through YOW&nbsp;&raquo;",
+            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDoYOW-C"
+        } ,
+	 {
+            "region": "UK",
+            "state": "Unighted Kingdom",
+            "city": "London",
+            "date": "Oct 28, 2013",
+            "instructor": "Alberto Brandolini",
+            "eventName": "DDD Foundations",
+            "pricing": "<strike>£1195</strike> £1075 60 days prior",
+            "bookingPrompt": "Book Online&nbsp;&raquo;",
+            "bookingUrl": "http://domainlanguage.com/training/schedule/DDDfLON-P"
+        } ,
+	 {
+            "region": "Russia",
+            "state": "Russia",
+            "city": "Moscow",
+            "date": "Nov 17, 2013",
+            "instructor": "Vladimir Gitlevich",
+            "eventName": "DDD Overview",
+            "pricing": "$2000",
+            "bookingPrompt": "Book Online, seriously!",
+            "bookingUrl": "http://domainlanguage.com"
+        } 
+    ]
+}
+

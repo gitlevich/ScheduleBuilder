@@ -3,6 +3,7 @@ package com.domainlanguage.schedule
 import java.io._
 import scala.io.{Codec, Source}
 import grizzled.slf4j.Logging
+import java.util.Properties
 
 /**
  * User: Vladimir Gitlevich
@@ -26,6 +27,15 @@ trait FilePersistence extends Logging {
     withClassPathSource[String](fileName) { source => source.mkString }
   }
 
+  def loadProperties(file: File): Properties = {
+    withFileReader[Properties](file)  {
+      reader =>
+        val props = new Properties()
+        props.load(reader)
+        props
+    }
+  }
+
   private def withPrintWriter(file: File)(op: PrintWriter => Unit) {
     val writer = new PrintWriter(file)
     try {
@@ -43,6 +53,16 @@ trait FilePersistence extends Logging {
     }
     finally {
       source.close()
+    }
+  }
+
+  private def withFileReader[T](file: File)(op: FileReader => T): T = {
+    val reader = new FileReader(file)
+    try {
+      op(reader)
+    }
+    finally {
+      reader.close()
     }
   }
 
