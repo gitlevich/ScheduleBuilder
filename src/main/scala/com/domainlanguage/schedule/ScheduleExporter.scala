@@ -62,7 +62,6 @@ trait ScheduleExporter extends FilePersistence {
     eventsPage.toString()
   }
 
-
   private def countrySubstitutions(theCountry: String): List[Map[String, String]] =
     List(Map(Schedule.region -> theCountry))
 

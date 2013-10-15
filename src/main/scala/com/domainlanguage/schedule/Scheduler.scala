@@ -29,7 +29,7 @@ object Scheduler extends SimpleSwingApplication with Logging {
   }
 
   def top = {
-    new MainFrame with TableModelListener with ScheduleExporter {
+    new MainFrame with TableModelListener with ScheduleExporter with FTPUpload {
 
       title = "Domain Language Class Scheduler"
 
@@ -61,12 +61,12 @@ object Scheduler extends SimpleSwingApplication with Logging {
       }
 
       val exportMenuItem = new MenuItem(Action("Export") {
-          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.workingDir)
+          exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
       })
 
       val exportAndPublishMenuItem = new MenuItem(Action("Export and Publish") {
-        exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.workingDir)
-        // TODO add publishing bit
+        exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
+        upload(config.exportDir.listFiles().toList, FtpDestinationSpec(loadProperties(config.properties)))
       })
 
       menuBar = new MenuBar {
@@ -123,8 +123,9 @@ case class SetUp(config: SchedulerConfiguration) extends FilePersistence with Lo
       errors += s"""Properties file "${config.properties}" is missing.\nPlease have someone add it."""
     }
 
+    if(!config.exportDir.exists()) config.exportDir.mkdirs()
+
     if(!config.scheduleFile.exists()) {
-      config.scheduleFile.getParentFile.mkdirs()
       try {
         writeToFile(config.scheduleFile, readFromClasspath("schedule.json"))
         debug(s"Created sample schedule file ${config.scheduleFile}")
@@ -143,6 +144,7 @@ case class SetUp(config: SchedulerConfiguration) extends FilePersistence with Lo
 case class SchedulerConfiguration(workingDir: File, scheduleFileName: String) {
   val scheduleFile = new File(workingDir, scheduleFileName)
   val properties = new File(workingDir, "scheduler.properties")
+  val exportDir = new File(workingDir, "export")
 }
 
 
