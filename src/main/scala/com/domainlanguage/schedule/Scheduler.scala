@@ -20,7 +20,7 @@ object Scheduler extends SimpleSwingApplication with Logging {
   val config = SchedulerConfiguration(new File("./workspace"), "schedule.json")
   SetUp(config).setUp() match {
     case Some(error) => {
-      Dialog.showMessage(message = error)
+      Dialog.showMessage(message = error, messageType = Dialog.Message.Error)
       quit()
     }
     case None =>
@@ -94,7 +94,7 @@ case class SetUp(config: SchedulerConfiguration) extends FilePersistence {
 
     val errors = ListBuffer[String]()
     if(!config.properties.exists()) {
-      errors += s"""Properties file "${config.properties.getAbsoluteFile}" is missing"""
+      errors += s"""Properties file "${config.properties}" is missing.\nPlease have someone add it."""
     }
 
     if(!config.scheduleFile.exists()) {
