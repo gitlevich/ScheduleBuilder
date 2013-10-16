@@ -16,7 +16,7 @@ class SchedulePane(grid: Grid) extends ScrollPane {
   val table = new Table(grid.rows.asInstanceOf[Array[Array[Any]]], grid.columnHeaders) {
     model = grid
     rowHeight = 25
-    autoResizeMode = Table.AutoResizeMode.AllColumns
+    autoResizeMode = Table.AutoResizeMode.LastColumn
     showGrid = true
     gridColor = new java.awt.Color(150, 150, 150)
 
