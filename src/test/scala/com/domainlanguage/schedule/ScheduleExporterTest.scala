@@ -27,7 +27,7 @@ class ScheduleExporterTest extends ShouldMatchersForJUnit with ScheduleExporter 
     actual should equal (expectedBriefPage)
   }
 
-  private val expectedDetailPage = """<h1>Schedule and pricing of Public Training</h1>
+  private val expectedDetailPage = """<h1>Schedule and Pricing of Public Training</h1>
                    |<table id="schedule">
                    |<tr style="height:1px;">
                    |    <td colspan="6">&nbsp;</td>

@@ -75,7 +75,7 @@ trait ScheduleExporter extends FilePersistence {
       instructor -> ecs(entry.instructor),
       eventName -> ecs(entry.eventName),
       pricing -> ecs(entry.pricing),
-      bookingPrompt -> ecs(entry.bookingPrompt),
+      bookingPrompt -> s"${ecs(entry.bookingPrompt)}&nbsp;&raquo;",
       bookingUrl -> ecs(entry.bookingUrl)
     )
   }
