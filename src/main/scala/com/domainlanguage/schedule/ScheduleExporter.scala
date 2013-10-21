@@ -1,6 +1,7 @@
 package com.domainlanguage.schedule
 
 import java.io.File
+import java.text.SimpleDateFormat
 
 /**
  * User: Vladimir Gitlevich
@@ -13,6 +14,7 @@ trait ScheduleExporter extends FilePersistence {
   private val detailTopTemplate = readFromClasspath("templates/events-page-header.html")
   private val detailCountryTemplate = readFromClasspath("templates/events-page-country.html")
   private val detailEventTemplate = readFromClasspath("templates/events-page-event-row.html")
+  private val detailSeparatorTemplate = readFromClasspath("templates/events-page-separator.html")
   private val detailBottomTemplate = readFromClasspath("templates/events-page-footer.html")
   
   private val briefHeaderTemplate = readFromClasspath("templates/brief-header.html")
@@ -57,6 +59,8 @@ trait ScheduleExporter extends FilePersistence {
         render(
           detailEventTemplate, schedule.eventsByCountry(theCountry) map (event => eventSubstitutions(event))).
             foreach(line => eventsPage.append(line))
+
+        eventsPage.append(detailSeparatorTemplate)
     }
 
     eventsPage.append(detailBottomTemplate)
@@ -73,7 +77,7 @@ trait ScheduleExporter extends FilePersistence {
       region -> ecs(entry.region),
       state -> ecs(entry.state),
       city -> ecs(entry.city),
-      date -> ecs(entry.date),
+      date -> entry.date.map(d => new SimpleDateFormat("MMM dd").format(d)).get,
       instructor -> ecs(entry.instructor),
       eventName -> ecs(entry.eventName),
       pricing -> ecs(entry.pricing),
