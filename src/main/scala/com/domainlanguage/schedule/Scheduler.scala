@@ -10,6 +10,8 @@ import java.awt.Dimension
 import grizzled.slf4j.Logging
 import Conversions._
 import java.lang.Exception
+import scala.concurrent.future
+import scala.concurrent.ExecutionContext.Implicits._
 
 /**
  * User: Vladimir Gitlevich
@@ -47,10 +49,15 @@ object Scheduler extends SimpleSwingApplication with Logging {
       val removeEntryButton = new Button("Remove event")
       removeEntryButton.tooltip = "Remove the currently selected event from the schedule"
 
+      val saveAndPublishButton = new Button("Save and Publish")
+      saveAndPublishButton.tooltip = "Save the schedule and publish it to the server"
+
       val buttonPanel = new BoxPanel(Orientation.Horizontal) {
         preferredSize = new Dimension(1150, 20)
         contents += addEntryButton
         contents += removeEntryButton
+        contents += new Separator()
+        contents += saveAndPublishButton
       }
 
       val contentPanel = new BoxPanel(Orientation.Vertical) {
@@ -60,30 +67,32 @@ object Scheduler extends SimpleSwingApplication with Logging {
         border = Swing.EmptyBorder(30, 30, 10, 30)
       }
 
-      val exportMenuItem = new MenuItem(Action("Export") {
+      val exportMenuItem = new MenuItem(Action("Save locally") {
           exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
       })
 
-      val exportAndPublishMenuItem = new MenuItem(Action("Export and Publish") {
-        exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
-        upload(config.exportDir.listFiles().toList, FtpDestinationSpec(loadProperties(config.properties)))
-      })
-
       menuBar = new MenuBar {
-        contents += new Menu("File") {
+        contents += new Menu("Tools") {
           contents += exportMenuItem
-          contents += exportAndPublishMenuItem
-          contents += new Separator
-          contents += new MenuItem(Action("Quit") {
-            quit()
-          })
         }
       }
 
-      listenTo(addEntryButton, removeEntryButton, this)
+      listenTo(addEntryButton, removeEntryButton, saveAndPublishButton, this)
       reactions += {
         case ButtonClicked(`addEntryButton`) => schedulePane.addEmptyRow()
         case ButtonClicked(`removeEntryButton`) => schedulePane.removeSelectedRow()
+        case ButtonClicked(`saveAndPublishButton`) =>
+          saveAndPublishButton.text = "Publishing..."
+          saveAndPublishButton.enabled = false
+          future {
+            exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
+            upload(config.exportDir.listFiles().toList, FtpDestinationSpec(loadProperties(config.properties)))
+          } onSuccess {
+            case result => Swing.onEDT {
+              saveAndPublishButton.text = "Save and Publish"
+              saveAndPublishButton.enabled = true
+            }
+          }
       }
 
       contents = contentPanel
@@ -92,7 +101,6 @@ object Scheduler extends SimpleSwingApplication with Logging {
         repository.save(config.scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
       }
     }
-
 
 
   private def showErrorAndQuit(error: String) {
