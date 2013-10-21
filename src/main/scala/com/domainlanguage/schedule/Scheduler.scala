@@ -84,14 +84,23 @@ object Scheduler extends SimpleSwingApplication with Logging {
         case ButtonClicked(`saveAndPublishButton`) =>
           saveAndPublishButton.text = "Publishing..."
           saveAndPublishButton.enabled = false
-          future {
+
+          val saveAndPublish = future {
             exportHtml(grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]), config.exportDir)
             upload(config.exportDir.listFiles().toList, FtpDestinationSpec(loadProperties(config.properties)))
-          } onSuccess {
-            case result => Swing.onEDT {
-              saveAndPublishButton.text = "Save and Publish"
-              saveAndPublishButton.enabled = true
-            }
+          }
+
+          saveAndPublish onSuccess {
+            case result =>
+              Swing.onEDT {
+                saveAndPublishButton.text = "Save and Publish"
+                saveAndPublishButton.enabled = true
+              }
+              result map {
+                error =>
+                  Dialog.showMessage(message = s"Unable to publish files, check FTP settings\nin ${config.properties}",
+                  messageType = Dialog.Message.Error)
+              }
           }
       }
 
