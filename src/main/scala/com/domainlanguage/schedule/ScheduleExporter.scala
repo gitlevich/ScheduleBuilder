@@ -22,11 +22,13 @@ trait ScheduleExporter extends FilePersistence {
   def exportHtml(schedule: Schedule, destinationDir: File) {
     require(destinationDir.isDirectory)
 
-    writeToFile(new File(destinationDir, detailTableFileName), asEventsPage(schedule))
+    val sorted = schedule.sorted
 
-    schedule.eventNames.foreach {
+    writeToFile(new File(destinationDir, detailTableFileName), asEventsPage(sorted))
+
+    sorted.eventNames.foreach {
       theName =>
-        writeToFile(new File(destinationDir, makeBriefPageFileName(theName)), asBriefsPage(theName, schedule))
+        writeToFile(new File(destinationDir, makeBriefPageFileName(theName)), asBriefsPage(theName, sorted))
     }
   }
 

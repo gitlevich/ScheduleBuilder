@@ -1,7 +1,6 @@
 package com.domainlanguage.schedule
 
-import scala.swing.{ScrollPane, Table, Component, Label, TextField, ListView, Alignment}
-import java.awt.Dimension
+import scala.swing._
 
 /**
  * User: Vladimir Gitlevich

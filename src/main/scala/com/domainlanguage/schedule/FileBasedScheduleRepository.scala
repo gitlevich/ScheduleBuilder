@@ -16,7 +16,7 @@ class FileBasedScheduleRepository extends ScheduleRepository with FilePersistenc
     }
 
   def save(file: File, schedule: Schedule): Unit = {
-    writeToFile(file, schedule.toJsonString)
+    writeToFile(file, schedule.sorted.toJsonString)
   }
 
 }

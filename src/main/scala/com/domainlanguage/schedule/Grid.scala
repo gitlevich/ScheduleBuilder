@@ -3,6 +3,7 @@ package com.domainlanguage.schedule
 import scala.collection.mutable.ListBuffer
 import javax.swing.table.TableModel
 import javax.swing.event.{TableModelEvent, TableModelListener}
+import java.util.Date
 
 /**
  * User: Vladimir Gitlevich
@@ -35,7 +36,9 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
   }
 
   def setValueAt(value: Any, row: Int, column: Int): Unit = {
-    gridCells(row)(column) = GridCell(value.asInstanceOf[String])
+    gridCells(row)(column) =
+      if(Grid.isDateColumn(column)) GridCell(value.asInstanceOf[Date]: String)
+      else GridCell(value.asInstanceOf[String])
     notifyListeners()
   }
   def getValueAt(row: Int, column: Int): AnyRef = gridCells(row)(column).value
@@ -44,7 +47,8 @@ case class Grid(gridCells: ListBuffer[ListBuffer[GridCell]], columnHeaders: Arra
   def getColumnCount: Int = columnHeaders.length
 
   def getColumnName(column: Int): String = columnHeaders(column)
-  def getColumnClass(column: Int): Class[_] = classOf[String]
+  def getColumnClass(column: Int): Class[_] = if(Grid.isDateColumn(column)) classOf[Date] else classOf[String]
+
 
   def isCellEditable(row: Int, column: Int): Boolean = true
 
@@ -63,6 +67,8 @@ object Grid {
     Event.columnNames.foreach(column => cells += GridCell())
     cells
   }
+
+  def isDateColumn(column: Int) = Event.columnNames(column) == "Date"
 }
 
 case class GridCell(value: String = "")

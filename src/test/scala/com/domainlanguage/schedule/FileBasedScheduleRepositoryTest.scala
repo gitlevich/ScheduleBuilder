@@ -2,6 +2,7 @@ package com.domainlanguage.schedule
 
 import org.scalatest.junit.ShouldMatchersForJUnit
 import org.junit.Test
+import java.text.SimpleDateFormat
 
 /**
  * This test is based on the sample schedule destinationDir /resources/schedule.json on the classpath
@@ -25,13 +26,14 @@ class FileBasedScheduleRepositoryTest extends ShouldMatchersForJUnit {
     schedule.eventCount should equal (5)
 
     val firstEntry = schedule.events(0)
-    firstEntry.region should be ("NORTH AMERICA")
-    firstEntry.city should be ("San Francisco")
-    firstEntry.date should be ("Nov 15, 2013")
-    firstEntry.instructor should be ("Eric Evans")
-    firstEntry.eventName should be ("DDD Overview")
-    firstEntry.pricing should be ("See QCon SF site.")
+    firstEntry.region should be ("UK")
+    firstEntry.state should be ("UK")
+    firstEntry.city should be ("London")
+    firstEntry.date should be (Option(new SimpleDateFormat(DateFormat).parse("Oct 28, 2013")))
+    firstEntry.instructor should be ("Alberto Brandolini")
+    firstEntry.eventName should be ("DDD Foundations")
+    firstEntry.pricing should be ("<strike>£1195</strike> £1075 60 days prior")
     firstEntry.bookingPrompt should startWith ("Book Online")
-    firstEntry.bookingUrl should be ("http://domainlanguage.com/training/schedule/DDDoNYC2013-11-15C")
+    firstEntry.bookingUrl should be ("http://domainlanguage.com/training/schedule/DDDfLON-P")
   }
 }

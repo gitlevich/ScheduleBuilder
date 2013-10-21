@@ -28,7 +28,7 @@ object Scheduler extends SimpleSwingApplication with Logging {
     case None =>
   }
 
-  def top = {
+  def top =
     new MainFrame with TableModelListener with ScheduleExporter with FTPUpload {
 
       title = "Domain Language Class Scheduler"
@@ -92,7 +92,6 @@ object Scheduler extends SimpleSwingApplication with Logging {
         repository.save(config.scheduleFile, grid2Schedule(schedulePane.table.model.asInstanceOf[Grid]))
       }
     }
-  }
 
 
 

@@ -3,6 +3,7 @@ package com.domainlanguage.schedule
 import org.scalatest.junit.ShouldMatchersForJUnit
 import org.junit.Test
 import scala.collection.mutable.ListBuffer
+import java.text.SimpleDateFormat
 
 /**
  * User: Vladimir Gitlevich
@@ -17,7 +18,7 @@ class ConversionsTest extends ShouldMatchersForJUnit {
       GridCell(region),
       GridCell(state),
       GridCell(city),
-      GridCell(date),
+      GridCell("Nov 12, 2014"),
       GridCell(instructor),
       GridCell(eventName),
       GridCell(pricing),
@@ -36,7 +37,7 @@ class ConversionsTest extends ShouldMatchersForJUnit {
     entry.region should be (region)
     entry.state should be (state)
     entry.city should be (city)
-    entry.date should be (date)
+    entry.date should be (Option(new SimpleDateFormat(DateFormat).parse("Nov 12, 2014")))
     entry.instructor should be (instructor)
     entry.eventName should be (eventName)
     entry.pricing should be (pricing)

@@ -2,6 +2,7 @@ package com.domainlanguage.schedule
 
 import java.io.File
 import scala.util.parsing.json.{JSONObject, JSON}
+import java.util.Date
 
 
 /**
@@ -17,9 +18,12 @@ case class Schedule(events: List[Event] = List()) {
     Schedule(events :+ event)
   }
 
-  def eventsByCountry(country: String): List[Event] = {
-    events.filter(event => event.region == country)
+  def sorted: Schedule = {
+    Schedule(events.sortBy(event => event.date))
   }
+
+  def eventsByCountry(country: String): List[Event] =
+    events.filter(event => event.region == country)
 
   val eventCountries = {
     val all = for(event <- events) yield event.region
@@ -45,21 +49,26 @@ case class Schedule(events: List[Event] = List()) {
   }
 }
 
-case class Event(region: String, state: String, city: String, date: String, instructor: String, eventName: String,
+case class Event(region: String, state: String, city: String, date: Option[Date], instructor: String, eventName: String,
                          pricing: String, bookingPrompt: String, bookingUrl: String) {
 
-  def toJsonString: String =
+  def toJsonString: String = {
+    val dateString: String = date match {
+      case None => ""
+      case Some(d) => d
+    }
     s""" {
             "${Schedule.region}": "$region",
             "${Schedule.state}": "$state",
             "${Schedule.city}": "$city",
-            "${Schedule.date}": "$date",
+            "${Schedule.date}": "$dateString",
             "${Schedule.instructor}": "$instructor",
             "${Schedule.eventName}": "$eventName",
             "${Schedule.pricing}": "$pricing",
             "${Schedule.bookingPrompt}": "$bookingPrompt",
             "${Schedule.bookingUrl}": "$bookingUrl"
         } """
+  }
 }
 
 object Schedule {
@@ -77,11 +86,11 @@ object Schedule {
     val schedulePrototype = JSON.parseFull(jsonString).getOrElse(new JSONObject(Map.empty[String, Any])).asInstanceOf[Map[String, Any]]
     val entryPrototypes = schedulePrototype("schedule").asInstanceOf[List[Map[String, String]]]
 
-    Schedule(entryPrototypes.map(p => toEvent(p)).toList)
+    Schedule(entryPrototypes.map(p => toEvent(p)).toList).sorted
   }
 
   private def toEvent(m: Map[String, String]): Event = {
-    Event(m(region), m(state), m(city), m(date), m(instructor), m(eventName), m(pricing), m(bookingPrompt), m(bookingUrl))
+    Event(m(region), m(state), m(city), Option(m(date)), m(instructor), m(eventName), m(pricing), m(bookingPrompt), m(bookingUrl))
   }
 }
 
@@ -95,6 +104,6 @@ trait ScheduleRepository {
   def save(file: File, schedule: Schedule): Unit
 }
 
-trait ScheduleSpec
+sealed trait ScheduleSpec
 case class FileScheduleSpec(file: File) extends ScheduleSpec
 case class ClassPathScheduleSpec(fileName: String) extends ScheduleSpec
